@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Doctors | Sancheti Hospital{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div>
+        <span class="eyebrow">
+            <i class="bi bi-person-badge"></i>
+            Clinician directory
+        </span>
+        <h2>Manage the full doctor roster.</h2>
+        <p>View clinician identity, specialty context, and linked operational details from one polished directory.</p>
+    </div>
+    <div class="page-hero-side">
+        <div class="mini-stat">
+            <span class="mini-stat-label">Doctors in system</span>
+            <span class="mini-stat-value">{{ doctors|length }}</span>
+        </div>
+        <div class="mini-stat">
+            <span class="mini-stat-label">Search support</span>
+            <span class="mini-stat-value">
+                <a href="{% url 'adminpanel:search_doctor' %}" class="text-white text-decoration-none">Open finder</a>
+            </span>
+        </div>
+    </div>
+</section>
+
+<section class="table-card">
+    <div class="table-toolbar">
+        <div>
+            <h3 class="table-title">Doctor directory</h3>
+            <p class="table-copy">Use the linked actions to inspect profiles, appointments, and patient coverage.</p>
+        </div>
+        <a class="btn-secondary-soft" href="{% url 'adminpanel:search_doctor' %}">
+            <i class="bi bi-search"></i>
+            Search doctors
+        </a>
+    </div>
+    <div class="table-responsive">
+        <table class="app-table">
+            <thead>
+                <tr>
+                    <th>Doctor</th>
+                    <th>Specialization</th>
+                    <th>Experience</th>
+                    <th>Profile</th>
+                    <th>Appointments</th>
+                    <th>Patients</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for doctor in doctors %}
+                <tr>
+                    <td>
+                        <div class="identity-cell">
+                            <span class="avatar-chip">{{ doctor.email|slice:":1"|upper }}</span>
+                            <div>
+                                <strong>{{ doctor.first_name|default:doctor.email }}</strong>
+                                <span class="subtle-meta">{{ doctor.email }}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ doctor.specialization.title|default:"Not assigned" }}</td>
+                    <td>{{ doctor.experience|default:"Not set" }}</td>
+                    <td><a class="btn-secondary-soft" href="{% url 'adminpanel:doctor_profile' doctor.id %}">Open profile</a></td>
+                    <td><a class="btn-brand" href="{% url 'adminpanel:doctor_appointments' doctor.id %}">Appointments</a></td>
+                    <td><a class="btn-ghost-soft" href="{% url 'adminpanel:doctor_patients' doctor.id %}">Patients</a></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">
+                        <div class="empty-state">
+                            <i class="bi bi-person-x"></i>
+                            <div>No doctors have been registered yet.</div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Search Doctors | Sancheti Hospital{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div>
+        <span class="eyebrow">
+            <i class="bi bi-search"></i>
+            Doctor search
+        </span>
+        <h2>Find clinicians instantly.</h2>
+        <p>Search by doctor name or email and move directly into the relevant profile or operational detail views.</p>
+    </div>
+    <div class="page-hero-side">
+        <div class="mini-stat">
+            <span class="mini-stat-label">Matches</span>
+            <span class="mini-stat-value">{{ doctors|length }}</span>
+        </div>
+    </div>
+</section>
+
+<section class="table-card">
+    <div class="table-toolbar">
+        <div>
+            <h3 class="table-title">Search doctors</h3>
+            <p class="table-copy">Use name or email to narrow down the doctor roster.</p>
+        </div>
+        <form method="get" class="search-form">
+            <input class="form-control" type="text" name="q" placeholder="Search doctor by name or email" value="{{ query }}">
+            <button class="btn-brand" type="submit">
+                <i class="bi bi-search"></i>
+                Search
+            </button>
+        </form>
+    </div>
+    <div class="table-responsive">
+        <table class="app-table">
+            <thead>
+                <tr>
+                    <th>Doctor</th>
+                    <th>Specialization</th>
+                    <th>Profile</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for doctor in doctors %}
+                <tr>
+                    <td>
+                        <div class="identity-cell">
+                            <span class="avatar-chip">{{ doctor.email|slice:":1"|upper }}</span>
+                            <div>
+                                <strong>{{ doctor.first_name|default:doctor.email }}</strong>
+                                <span class="subtle-meta">{{ doctor.email }}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ doctor.specialization.title|default:"Not assigned" }}</td>
+                    <td><a class="btn-secondary-soft" href="{% url 'adminpanel:doctor_profile' doctor.id %}">Open profile</a></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3">
+                        <div class="empty-state">
+                            <i class="bi bi-search"></i>
+                            <div>No doctors matched your search.</div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

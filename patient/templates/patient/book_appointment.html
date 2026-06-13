@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Book Appointment | Sancheti Hospital{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div>
+        <span class="eyebrow">
+            <i class="bi bi-plus-circle"></i>
+            Appointment booking
+        </span>
+        <h2>Schedule your next visit in a few steps.</h2>
+        <p>Choose a doctor, set your preferred date and time, and add symptoms so the care team has better context before the visit.</p>
+    </div>
+</section>
+
+<section class="content-grid">
+    <article class="form-card">
+        <div class="form-header">
+            <div>
+                <h3 class="form-title">Book appointment</h3>
+                <p class="form-copy">Fill in the appointment details below to submit your request.</p>
+            </div>
+        </div>
+
+        <form method="post" class="mt-4">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="field-block full-span">
+                    <label for="doctor">Select Doctor</label>
+                    <select name="doctor" id="doctor" required>
+                        <option value="">Choose a doctor</option>
+                        {% for doctor in doctors %}
+                        <option value="{{ doctor.id }}">
+                            {{ doctor.first_name|default:doctor.email }}{% if doctor.specialization %} - {{ doctor.specialization.title }}{% endif %}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="field-block">
+                    <label for="mobile">Your Mobile</label>
+                    <input type="tel" name="mobile" id="mobile" placeholder="Enter mobile number" required>
+                </div>
+                <div class="field-block">
+                    <label for="date">Preferred Date</label>
+                    <input type="date" name="date" id="date" required>
+                </div>
+                <div class="field-block">
+                    <label for="time">Preferred Time</label>
+                    <input type="time" name="time" id="time" required>
+                </div>
+                <div class="field-block full-span">
+                    <label for="symptoms">Symptoms / Notes</label>
+                    <textarea name="symptoms" id="symptoms" placeholder="Describe your symptoms or the reason for your visit..." required></textarea>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button class="btn-brand" type="submit">
+                    <i class="bi bi-send-check"></i>
+                    Submit request
+                </button>
+                <a class="btn-secondary-soft" href="{% url 'patient:appointment_history' %}">
+                    <i class="bi bi-clock-history"></i>
+                    View appointment history
+                </a>
+            </div>
+        </form>
+    </article>
+
+    <aside class="note-card">
+        <h3 class="panel-title">Booking guidance</h3>
+        <p class="panel-copy">Adding clear symptoms helps the care team prepare before confirming the appointment.</p>
+    </aside>
+</section>
+{% endblock %}

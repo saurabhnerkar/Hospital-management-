@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Website Content | Sancheti Hospital{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div>
+        <span class="eyebrow">
+            <i class="bi bi-window-stack"></i>
+            Public experience
+        </span>
+        <h2>Update homepage messaging.</h2>
+        <p>Control the narrative presented on the public landing page with a simple editorial field tied to the redesigned marketing experience.</p>
+    </div>
+</section>
+
+<section class="content-grid">
+    <article class="form-card">
+        <div class="form-header">
+            <div>
+                <h3 class="form-title">Homepage content block</h3>
+                <p class="form-copy">This content appears on the landing page as a value statement for the hospital platform.</p>
+            </div>
+        </div>
+
+        <form method="post" class="mt-4">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="field-block full-span">
+                    <label for="content">Homepage message</label>
+                    <textarea name="content" id="content" placeholder="Write a concise, high-trust message for visitors...">{{ content }}</textarea>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button class="btn-brand" type="submit">
+                    <i class="bi bi-save"></i>
+                    Save homepage content
+                </button>
+                <a class="btn-secondary-soft" href="{% url 'accounts:home' %}">
+                    <i class="bi bi-box-arrow-up-right"></i>
+                    Preview public site
+                </a>
+            </div>
+        </form>
+    </article>
+
+    <aside class="note-card">
+        <h3 class="panel-title">Writing guidance</h3>
+        <p class="panel-copy">Short, confident messaging works best on the homepage.</p>
+        <div class="timeline-list">
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div>
+                    <strong>Keep it concise</strong>
+                    <span>One or two sentences are enough to reinforce value and trust.</span>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div>
+                    <strong>Focus on outcomes</strong>
+                    <span>Talk about coordinated care, operational clarity, and patient confidence.</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+</section>
+{% endblock %}

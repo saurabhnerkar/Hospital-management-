@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Doctor Appointments | Sancheti Hospital{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div>
+        <span class="eyebrow">
+            <i class="bi bi-calendar2-week"></i>
+            Appointment visibility
+        </span>
+        <h2>Doctor appointment history</h2>
+        <p>Review appointment flow for this clinician, including patient contact details, visit timing, and current status.</p>
+    </div>
+    <div class="page-hero-side">
+        <div class="mini-stat">
+            <span class="mini-stat-label">Appointments listed</span>
+            <span class="mini-stat-value">{{ appointments|length }}</span>
+        </div>
+        <div class="mini-stat">
+            <span class="mini-stat-label">Back to roster</span>
+            <span class="mini-stat-value"><a href="{% url 'adminpanel:doctors_list' %}" class="text-white text-decoration-none">Doctors</a></span>
+        </div>
+    </div>
+</section>
+
+<section class="table-card">
+    <div class="table-toolbar">
+        <div>
+            <h3 class="table-title">Doctor appointments</h3>
+            <p class="table-copy">A chronological view of appointments scheduled with this doctor.</p>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="app-table">
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Mobile</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Symptoms</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appointment in appointments %}
+                <tr>
+                    <td>{{ appointment.patient_name }}</td>
+                    <td>{{ appointment.patient_mobile }}</td>
+                    <td>{{ appointment.date }}</td>
+                    <td>{{ appointment.time }}</td>
+                    <td>{{ appointment.symptoms|default:"Not provided" }}</td>
+                    <td><span class="status-pill status-{{ appointment.status|title }}">{{ appointment.status|title }}</span></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">
+                        <div class="empty-state">
+                            <i class="bi bi-calendar2-x"></i>
+                            <div>No appointments are linked to this doctor yet.</div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

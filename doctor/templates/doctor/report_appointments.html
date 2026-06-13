@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Appointment Report | Sancheti Hospital{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div>
+        <span class="eyebrow">
+            <i class="bi bi-file-earmark-bar-graph"></i>
+            Appointment reporting
+        </span>
+        <h2>Generate appointment reports by date range.</h2>
+        <p>Review appointment activity for your practice with a structured report that is easy to scan and share.</p>
+    </div>
+</section>
+
+<section class="form-card">
+    <div class="form-header">
+        <div>
+            <h3 class="form-title">Report filters (Optional)</h3>
+            <p class="form-copy">Choose a date range to filter appointments, or leave blank to see all appointments.</p>
+        </div>
+    </div>
+    <form method="post" class="mt-4">
+        {% csrf_token %}
+        <div class="form-grid">
+            <div class="field-block">
+                <label for="start">Start date</label>
+                <input type="date" name="start" id="start">
+            </div>
+            <div class="field-block">
+                <label for="end">End date</label>
+                <input type="date" name="end" id="end">
+            </div>
+        </div>
+        <div class="form-actions">
+            <button class="btn-brand" type="submit" name="action" value="filter">
+                <i class="bi bi-bar-chart-line"></i>
+                Filter Appointments
+            </button>
+        </div>
+    </form>
+    
+    {% if appointments %}
+    <div class="form-actions" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(22, 109, 168, 0.12);">
+        <form method="post" style="display: inline;">
+            {% csrf_token %}
+            <input type="hidden" name="start" value="{{ request.POST.start }}">
+            <input type="hidden" name="end" value="{{ request.POST.end }}">
+            <button class="btn-secondary-soft" type="submit" name="export_format" value="excel" style="margin-right: 0.5rem;">
+                <i class="bi bi-file-earmark-spreadsheet"></i>
+                Export to Excel
+            </button>
+            <button class="btn-secondary-soft" type="submit" name="export_format" value="pdf">
+                <i class="bi bi-file-earmark-pdf"></i>
+                Export to PDF
+            </button>
+        </form>
+    </div>
+    {% endif %}
+</section>
+
+<section class="table-card">
+    <div class="table-toolbar">
+        <div>
+            <h3 class="table-title">Appointments in range</h3>
+            <p class="table-copy">Appointments matching your selected reporting period.</p>
+        </div>
+        {% if appointments %}
+        <div class="table-stats">
+            <span class="stat-badge">Total: {{ appointments|length }}</span>
+        </div>
+        {% endif %}
+    </div>
+    <div class="table-responsive">
+        <table class="app-table">
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Mobile</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appointment in appointments %}
+                <tr>
+                    <td>{{ appointment.patient_name }}</td>
+                    <td>{{ appointment.patient_mobile }}</td>
+                    <td>{{ appointment.date }}</td>
+                    <td>{{ appointment.time }}</td>
+                    <td><span class="status-pill status-{{ appointment.status|title }}">{{ appointment.status|title }}</span></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">
+                        <div class="empty-state">
+                            <i class="bi bi-file-earmark-bar-graph"></i>
+                            <div>No appointments found. Create an appointment to see it here.</div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

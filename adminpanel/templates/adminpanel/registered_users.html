@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Registered Users | Sancheti Hospital{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div>
+        <span class="eyebrow">
+            <i class="bi bi-person-vcard"></i>
+            Engagement audit
+        </span>
+        <h2>Users who have booked appointments.</h2>
+        <p>Keep an eye on active patient participation and remove access where necessary from a cleaner administrative view.</p>
+    </div>
+    <div class="page-hero-side">
+        <div class="mini-stat">
+            <span class="mini-stat-label">Users listed</span>
+            <span class="mini-stat-value">{{ users|length }}</span>
+        </div>
+    </div>
+</section>
+
+<section class="table-card">
+    <div class="table-toolbar">
+        <div>
+            <h3 class="table-title">Registered users with bookings</h3>
+            <p class="table-copy">Patient accounts that have at least one appointment recorded.</p>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="app-table">
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.patient__email|default:"Unavailable" }}</td>
+                    <td>
+                        {% if user.patient__id %}
+                        <a class="btn-danger-soft" href="{% url 'adminpanel:delete_user' user.patient__id %}" onclick="return confirm('Delete this registered user?');">
+                            <i class="bi bi-trash3"></i>
+                            Delete
+                        </a>
+                        {% else %}
+                        <span class="soft-pill soft-pill--muted">Unavailable</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2">
+                        <div class="empty-state">
+                            <i class="bi bi-person-x"></i>
+                            <div>No booked users have been detected yet.</div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

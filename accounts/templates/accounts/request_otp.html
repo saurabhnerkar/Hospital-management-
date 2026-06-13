@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Request OTP | Sancheti Hospital</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+
+            /* Professional medical background */
+            background: 
+                linear-gradient(rgba(0, 0, 25, 0.65), rgba(0, 0, 25, 0.85)),
+                url("https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&w=1740&q=80")
+                no-repeat center center/cover;
+
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .otp-container {
+            width: 420px;
+            padding: 35px;
+            border-radius: 18px;
+
+            /* GLASS EFFECT */
+            background: rgba(255, 255, 255, 0.10);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+
+            color: white;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Branding */
+        .brand {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .brand h1 {
+            font-size: 30px;
+            font-weight: 700;
+            color: #00eaff;
+            text-shadow: 0 0 10px #00eaff;
+            margin: 0;
+        }
+
+        .brand h4 {
+            font-size: 14px;
+            margin-top: 5px;
+            color: #c8f9ff;
+            font-weight: 300;
+            letter-spacing: 0.4px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 23px;
+            font-weight: 600;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            background: #00eaff;
+            border: none;
+            color: #003a4a;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #00bcd1;
+            transform: translateY(-2px);
+        }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 18px;
+            font-size: 14px;
+        }
+
+        .footer-text a {
+            color: #7feaff;
+            text-decoration: none;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 15px;
+        }
+
+        ul li {
+            color: #ffb3b3;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        form p {
+            color: white;
+        }
+
+        input[type="text"],
+        input[type="email"] {
+            width: 100%;
+            padding: 12px;
+            margin-top: 6px;
+            border-radius: 8px;
+            border: none;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="otp-container">
+
+    <!-- Branding -->
+    <div class="brand">
+        <h1>SANCHETI HOSPITAL</h1>
+        <h4>Advanced Multispeciality Healthcare</h4>
+    </div>
+
+    <h2>Request Login OTP</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Send OTP</button>
+    </form>
+
+    <div class="footer-text">
+        Don't have an account?
+        <a href="/accounts/register/">Register here</a>.
+    </div>
+
+    {% if messages %}
+    <ul>
+        {% for message in messages %}
+        <li {{ message.tags|default:"" }}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Patient Profile | Sancheti Hospital{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div>
+        <span class="eyebrow">
+            <i class="bi bi-person-circle"></i>
+            Profile settings
+        </span>
+        <h2>Keep your patient profile current.</h2>
+        <p>Update the basic personal details tied to your account so your care experience stays accurate and consistent.</p>
+    </div>
+</section>
+
+<section class="content-grid">
+    <article class="form-card">
+        <div class="form-header">
+            <div>
+                <h3 class="form-title">Profile information</h3>
+                <p class="form-copy">Adjust your name and email from one clear profile view.</p>
+            </div>
+        </div>
+
+        <form method="post" class="mt-4">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="field-block">
+                    <label for="name">Name</label>
+                    <input type="text" name="name" id="name" value="{{ request.user.first_name|default_if_none:'' }}" required>
+                </div>
+                <div class="field-block">
+                    <label for="email">Email Address</label>
+                    <input type="email" name="email" id="email" value="{{ request.user.email }}" required>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button class="btn-brand" type="submit">
+                    <i class="bi bi-check2-circle"></i>
+                    Save profile
+                </button>
+            </div>
+        </form>
+    </article>
+
+    <aside class="note-card">
+        <h3 class="panel-title">Profile tip</h3>
+        <p class="panel-copy">Keeping your name and email current helps the care team match bookings and notifications correctly.</p>
+    </aside>
+</section>
+{% endblock %}

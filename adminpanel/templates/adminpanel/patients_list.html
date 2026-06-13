@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Patients | Sancheti Hospital{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div>
+        <span class="eyebrow">
+            <i class="bi bi-person-heart"></i>
+            Patient directory
+        </span>
+        <h2>Manage patient access and visibility.</h2>
+        <p>Browse registered patients, inspect contact identity, and keep platform participation under control.</p>
+    </div>
+    <div class="page-hero-side">
+        <div class="mini-stat">
+            <span class="mini-stat-label">Registered patients</span>
+            <span class="mini-stat-value">{{ patients|length }}</span>
+        </div>
+        <div class="mini-stat">
+            <span class="mini-stat-label">Search support</span>
+            <span class="mini-stat-value"><a href="{% url 'adminpanel:search_patient' %}" class="text-white text-decoration-none">Open finder</a></span>
+        </div>
+    </div>
+</section>
+
+<section class="table-card">
+    <div class="table-toolbar">
+        <div>
+            <h3 class="table-title">Patient directory</h3>
+            <p class="table-copy">Review who has been added to the platform and remove stale access where needed.</p>
+        </div>
+        <a class="btn-secondary-soft" href="{% url 'adminpanel:search_patient' %}">
+            <i class="bi bi-search"></i>
+            Search patients
+        </a>
+    </div>
+    <div class="table-responsive">
+        <table class="app-table">
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Role</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for patient in patients %}
+                <tr>
+                    <td>
+                        <div class="identity-cell">
+                            <span class="avatar-chip">{{ patient.email|slice:":1"|upper }}</span>
+                            <div>
+                                <strong>{{ patient.first_name|default:patient.email }}</strong>
+                                <span class="subtle-meta">{{ patient.email }}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="soft-pill soft-pill--brand text-capitalize">{{ patient.role }}</span></td>
+                    <td>
+                        <a class="btn-danger-soft" href="{% url 'adminpanel:delete_patient' patient.id %}" onclick="return confirm('Delete this patient account?');">
+                            <i class="bi bi-trash3"></i>
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3">
+                        <div class="empty-state">
+                            <i class="bi bi-person-x"></i>
+                            <div>No patients are registered yet.</div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

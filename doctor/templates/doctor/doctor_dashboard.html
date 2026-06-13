@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}Doctor Dashboard | Sancheti Hospital{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div>
+        <span class="eyebrow">
+            <i class="bi bi-heart-pulse"></i>
+            Clinician dashboard
+        </span>
+        <h2>Stay on top of appointments and patient activity.</h2>
+        <p>Move through your day with clearer scheduling visibility, patient context, and direct access to the actions that matter most.</p>
+        <div class="inline-actions mt-4">
+            <a class="btn-brand" href="{% url 'doctor:doctor_appointments' %}">
+                <i class="bi bi-calendar2-check"></i>
+                Open appointments
+            </a>
+            <a class="btn-secondary-soft" href="{% url 'doctor:add_patient' %}">
+                <i class="bi bi-person-plus"></i>
+                Add patient
+            </a>
+        </div>
+    </div>
+    <div class="page-hero-side">
+        <div class="mini-stat">
+            <span class="mini-stat-label">Upcoming appointments</span>
+            <span class="mini-stat-value">{{ next_appointments|length }}</span>
+        </div>
+        <div class="mini-stat">
+            <span class="mini-stat-label">Managed patients</span>
+            <span class="mini-stat-value">{{ total_added_patients }}</span>
+        </div>
+    </div>
+</section>
+
+<section class="stat-grid">
+    <article class="stat-card card-hover">
+        <div class="stat-card-head">
+            <div>
+                <span class="stat-label">Total Appointments</span>
+                <span class="stat-value" data-counter="{{ total_appointments }}">{{ total_appointments }}</span>
+            </div>
+            <div class="stat-icon"><i class="bi bi-calendar2-week"></i></div>
+        </div>
+        <span class="stat-note">All appointments linked to your account.</span>
+    </article>
+    <article class="stat-card card-hover" data-tone="teal">
+        <div class="stat-card-head">
+            <div>
+                <span class="stat-label">Pending Requests</span>
+                <span class="stat-value" data-counter="{{ new_appointments }}">{{ new_appointments }}</span>
+            </div>
+            <div class="stat-icon"><i class="bi bi-hourglass-split"></i></div>
+        </div>
+        <span class="stat-note">Appointments waiting for your decision.</span>
+    </article>
+    <article class="stat-card card-hover" data-tone="success">
+        <div class="stat-card-head">
+            <div>
+                <span class="stat-label">Approved</span>
+                <span class="stat-value" data-counter="{{ approved }}">{{ approved }}</span>
+            </div>
+            <div class="stat-icon"><i class="bi bi-check2-circle"></i></div>
+        </div>
+        <span class="stat-note">Confirmed visits moving forward.</span>
+    </article>
+    <article class="stat-card card-hover" data-tone="danger">
+        <div class="stat-card-head">
+            <div>
+                <span class="stat-label">Cancelled</span>
+                <span class="stat-value" data-counter="{{ cancelled }}">{{ cancelled }}</span>
+            </div>
+            <div class="stat-icon"><i class="bi bi-x-circle"></i></div>
+        </div>
+        <span class="stat-note">Cancelled or declined appointment requests.</span>
+    </article>
+    <article class="stat-card card-hover" data-tone="brand">
+        <div class="stat-card-head">
+            <div>
+                <span class="stat-label">Added Patients</span>
+                <span class="stat-value" data-counter="{{ total_added_patients }}">{{ total_added_patients }}</span>
+            </div>
+            <div class="stat-icon"><i class="bi bi-people"></i></div>
+        </div>
+        <span class="stat-note">Patient records maintained in your workspace.</span>
+    </article>
+</section>
+
+<section class="content-grid">
+    <article class="table-card">
+        <div class="table-toolbar">
+            <div>
+                <h3 class="table-title">Upcoming appointments</h3>
+                <p class="table-copy">Your next scheduled visits, ordered chronologically.</p>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="app-table">
+                <thead>
+                    <tr>
+                        <th>Patient</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appointment in next_appointments %}
+                    <tr>
+                        <td>
+                            <strong>{{ appointment.patient_name }}</strong>
+                            <span class="subtle-meta">{{ appointment.patient_mobile }}</span>
+                        </td>
+                        <td>{{ appointment.date }}</td>
+                        <td>{{ appointment.time }}</td>
+                        <td><span class="status-pill status-{{ appointment.status|title }}">{{ appointment.status|title }}</span></td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4">
+                            <div class="empty-state">
+                                <i class="bi bi-calendar2-check"></i>
+                                <div>No upcoming appointments are scheduled right now.</div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </article>
+
+    <aside class="panel">
+        <div class="panel-header">
+            <div>
+                <h3 class="panel-title">Recent patient additions</h3>
+                <p class="panel-copy">The latest patients added from your workspace.</p>
+            </div>
+        </div>
+        <div class="quick-links">
+            {% for patient in recent_patients %}
+            <div class="detail-item">
+                <strong>{{ patient.name }}</strong>
+                <span>{{ patient.mobile }} | {{ patient.disease|default:"No disease note" }}</span>
+            </div>
+            {% empty %}
+            <div class="detail-item">
+                <strong>No patient records yet</strong>
+                <span>Use the add patient flow to create your first record.</span>
+            </div>
+            {% endfor %}
+        </div>
+    </aside>
+</section>
+{% endblock %}

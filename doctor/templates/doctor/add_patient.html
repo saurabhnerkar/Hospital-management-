@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Add Patient | Sancheti Hospital{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div>
+        <span class="eyebrow">
+            <i class="bi bi-person-plus"></i>
+            Add patient
+        </span>
+        <h2>Create a new patient record.</h2>
+        <p>Add the essential clinical context needed to keep your patient list organized and actionable.</p>
+    </div>
+</section>
+
+<section class="content-grid">
+    <article class="form-card">
+        <div class="form-header">
+            <div>
+                <h3 class="form-title">Patient details</h3>
+                <p class="form-copy">Capture the core data you need for follow-up and documentation.</p>
+            </div>
+        </div>
+
+        <form method="post" action="{% url 'doctor:add_patient' %}" class="mt-4">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="field-block">
+                    <label for="name">Patient Name</label>
+                    <input type="text" name="name" id="name" required>
+                </div>
+                <div class="field-block">
+                    <label for="mobile">Mobile Number</label>
+                    <input type="tel" name="mobile" id="mobile" required>
+                </div>
+                <div class="field-block">
+                    <label for="age">Age</label>
+                    <input type="number" name="age" id="age" min="0" required>
+                </div>
+                <div class="field-block">
+                    <label for="disease">Disease / Condition</label>
+                    <input type="text" name="disease" id="disease" required>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button class="btn-brand" type="submit">
+                    <i class="bi bi-check2-circle"></i>
+                    Save patient
+                </button>
+                <a class="btn-secondary-soft" href="{% url 'doctor:doctor_patients' %}">
+                    <i class="bi bi-arrow-left"></i>
+                    Back to patients
+                </a>
+            </div>
+        </form>
+    </article>
+
+    <aside class="note-card">
+        <h3 class="panel-title">Clinical workflow tip</h3>
+        <p class="panel-copy">Keep patient names, mobile numbers, and disease notes accurate so search and follow-up actions stay reliable.</p>
+    </aside>
+</section>
+{% endblock %}

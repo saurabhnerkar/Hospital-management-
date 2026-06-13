@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}Receipt{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-card">
+
+    <div class="text-center">
+
+        <h2>Sancheti Hospital</h2>
+
+        <p>Payment Receipt</p>
+
+    </div>
+
+    <hr>
+
+    <table class="table">
+
+        <tr>
+            <th>Receipt No</th>
+            <td>{{ payment.receipt_no }}</td>
+        </tr>
+
+        <tr>
+            <th>Bill No</th>
+            <td>{{ payment.bill.bill_no }}</td>
+        </tr>
+
+        <tr>
+            <th>Patient</th>
+            <td>{{ payment.bill.patient.name }}</td>
+        </tr>
+
+        <tr>
+            <th>Doctor</th>
+            <td>{{ payment.bill.doctor.email }}</td>
+        </tr>
+
+        <tr>
+            <th>Amount Paid</th>
+            <td>₹ {{ payment.amount_paid }}</td>
+        </tr>
+
+        <tr>
+            <th>Mode</th>
+            <td>{{ payment.payment_mode }}</td>
+        </tr>
+
+    </table>
+
+    <button onclick="window.print()"
+            class="btn-brand">
+
+        Print Receipt
+
+    </button>
+
+</div>
+
+{% endblock %}

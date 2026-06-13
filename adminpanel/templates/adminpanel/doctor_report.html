@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Doctor Reports | Sancheti Hospital{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div>
+        <span class="eyebrow">
+            <i class="bi bi-clipboard2-data"></i>
+            Reporting
+        </span>
+        <h2>Generate doctor appointment reports.</h2>
+        <p>Filter appointments by doctor and date range to review service activity in a structured, presentation-ready format.</p>
+    </div>
+</section>
+
+<section class="form-card">
+    <div class="form-header">
+        <div>
+            <h3 class="form-title">Report filters</h3>
+            <p class="form-copy">Choose a doctor and reporting window to generate the latest activity snapshot.</p>
+        </div>
+    </div>
+
+    <form method="post" class="mt-4">
+        {% csrf_token %}
+        <div class="form-grid">
+            <div class="field-block">
+                <label for="doctor">Doctor</label>
+                <select name="doctor" id="doctor" required>
+                    <option value="">Select doctor</option>
+                    {% for doctor in doctors %}
+                    <option value="{{ doctor.id }}">{{ doctor.email }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="field-block">
+                <label for="start">Start date</label>
+                <input type="date" name="start" id="start" required>
+            </div>
+            <div class="field-block">
+                <label for="end">End date</label>
+                <input type="date" name="end" id="end" required>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button class="btn-brand" type="submit">
+                <i class="bi bi-bar-chart-line"></i>
+                Generate report
+            </button>
+        </div>
+    </form>
+</section>
+
+<section class="table-card">
+    <div class="table-toolbar">
+        <div>
+            <h3 class="table-title">Report output</h3>
+            <p class="table-copy">Appointments matching the selected filters.</p>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="app-table">
+            <thead>
+                <tr>
+                    <th>Doctor</th>
+                    <th>Patient</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in reports %}
+                <tr>
+                    <td>{{ report.doctor.email }}</td>
+                    <td>{{ report.patient_name }}</td>
+                    <td>{{ report.date }}</td>
+                    <td>{{ report.time }}</td>
+                    <td><span class="status-pill status-{{ report.status|title }}">{{ report.status|title }}</span></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">
+                        <div class="empty-state">
+                            <i class="bi bi-file-earmark-bar-graph"></i>
+                            <div>Choose filters and generate a doctor report to see results here.</div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

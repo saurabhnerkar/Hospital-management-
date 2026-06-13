@@ -1,0 +1,332 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sancheti Hospital | Advanced Healthcare Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{% static 'css/healthcare-ui.css' %}">
+</head>
+<body class="marketing-body">
+    <header class="marketing-nav">
+        <div class="marketing-shell">
+            <div class="marketing-nav-inner">
+                <div class="sidebar-brand mb-0" style="color: var(--text);">
+                    <div class="brand-icon">
+                        <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="10" y="10" width="80" height="80" rx="8" fill="#17A2B8"/>
+                            <text x="50" y="70" font-size="60" font-weight="bold" fill="white" text-anchor="middle">S</text>
+                        </svg>
+                    </div>
+                    <div class="brand-copy" style="color: var(--text);">
+                        <strong style="color: var(--text); font-size: 1.1rem;">Sancheti Hospital</strong>
+                        <span style="color: var(--muted); font-size: 0.85rem;">Premier Orthopedic Care</span>
+                    </div>
+                </div>
+
+                <nav class="marketing-links">
+                    <a href="#platform">Platform</a>
+                    <a href="#workspaces">Workspaces</a>
+                    <a href="#services">Services</a>
+                    <a href="#contact">Contact</a>
+                </nav>
+
+                <div class="marketing-actions">
+                    <a class="btn-secondary-soft" href="{% url 'accounts:register' %}">
+                        <i class="bi bi-person-plus"></i>
+                        Register
+                    </a>
+                    <a class="btn-brand" href="{% url 'accounts:login' %}">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                        Sign In
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="marketing-shell">
+        <section class="hero-grid">
+            <div class="hero-copy">
+                <span class="eyebrow">
+                    <i class="bi bi-shield-check"></i>
+                    Enterprise-ready care operations
+                </span>
+                <h1>Healthcare coordination designed like a premium SaaS platform.</h1>
+                <p>Unify scheduling, clinician workflows, patient access, and operational reporting in one calm, elegant workspace built for high-trust healthcare organizations.</p>
+
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <strong>24/7</strong>
+                        <span>care operations visibility</span>
+                    </div>
+                    <div class="hero-stat">
+                        <strong>3</strong>
+                        <span>tailored portals for every role</span>
+                    </div>
+                    <div class="hero-stat">
+                        <strong>1</strong>
+                        <span>connected source of truth</span>
+                    </div>
+                </div>
+
+                <div class="inline-actions">
+                    <a class="btn-brand" href="{% url 'accounts:login' %}?role=admin">
+                        <i class="bi bi-building-gear"></i>
+                        Enter Admin Workspace
+                    </a>
+                    <a class="btn-secondary-soft" href="#workspaces">
+                        <i class="bi bi-arrow-down-right"></i>
+                        Explore Portals
+                    </a>
+                </div>
+            </div>
+
+            <div class="hero-visual">
+                <div class="floating-panel">
+                    <span class="eyebrow">
+                        <i class="bi bi-activity"></i>
+                        Live overview
+                    </span>
+                    <h3>Operations pulse</h3>
+                    <div class="compact-list">
+                        <div class="list-row">
+                            <strong>Appointments routed faster</strong>
+                            <span>Coordinate bookings, approvals, and histories in one place.</span>
+                        </div>
+                        <div class="list-row">
+                            <strong>Clinician workload visibility</strong>
+                            <span>Track doctor activity, patient volume, and status trends.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="floating-panel">
+                    <h3>Experience quality</h3>
+                    <div class="detail-list">
+                        <div class="detail-item">
+                            <strong>Navigation</strong>
+                            <span>Role-based sidebars keep high-priority tasks within one click.</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Interface clarity</strong>
+                            <span>Glass cards, soft depth, and structured data views reduce friction.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="floating-panel">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <strong>Digital transformation readiness</strong>
+                        <span class="soft-pill soft-pill--brand">92%</span>
+                    </div>
+                    <div class="mini-progress">
+                        <span style="width: 92%;"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="platform" class="marketing-section">
+            <div class="section-header">
+                <div>
+                    <span class="eyebrow">
+                        <i class="bi bi-stars"></i>
+                        Platform value
+                    </span>
+                    <h2>Designed for hospitals that need speed, clarity, and trust.</h2>
+                </div>
+                <p>{{ homepage_content }}</p>
+            </div>
+
+            <div class="value-grid">
+                <article class="marketing-panel card-hover">
+                    <div class="panel-icon"><i class="bi bi-shield-lock"></i></div>
+                    <h3>Professional enterprise look</h3>
+                    <p>Refined dashboards, premium cards, and responsive layouts create a confident experience for busy care teams.</p>
+                </article>
+                <article class="marketing-panel card-hover">
+                    <div class="panel-icon"><i class="bi bi-diagram-3"></i></div>
+                    <h3>Connected workflows</h3>
+                    <p>Admins, doctors, and patients each get focused tools while staying aligned around the same operational data.</p>
+                </article>
+                <article class="marketing-panel card-hover">
+                    <div class="panel-icon"><i class="bi bi-bar-chart"></i></div>
+                    <h3>Operational transparency</h3>
+                    <p>Clear metrics, accessible tables, and reporting surfaces help teams spot bottlenecks and act early.</p>
+                </article>
+            </div>
+        </section>
+
+        <section id="workspaces" class="marketing-section">
+            <div class="section-header">
+                <div>
+                    <span class="eyebrow">
+                        <i class="bi bi-grid"></i>
+                        Role-based portals
+                    </span>
+                    <h2>Every user enters a workspace built for their day.</h2>
+                </div>
+                <p>Simple role entry points reduce confusion and make the next action obvious from the first screen.</p>
+            </div>
+
+            <div class="portal-grid">
+                <article class="marketing-panel portal-card card-hover">
+                    <div class="panel-icon"><i class="bi bi-building-gear"></i></div>
+                    <div>
+                        <h3>Admin Command Center</h3>
+                        <p>Monitor doctors, patient enrollment, appointment volume, and reporting from one executive view.</p>
+                    </div>
+                    <div class="inline-actions">
+                        <a class="btn-brand" href="{% url 'accounts:login' %}?role=admin">Admin Login</a>
+                    </div>
+                </article>
+
+                <article class="marketing-panel portal-card card-hover">
+                    <div class="panel-icon"><i class="bi bi-person-badge"></i></div>
+                    <div>
+                        <h3>Doctor Workspace</h3>
+                        <p>Handle appointments, search patient records, manage patient lists, and review care activity with less friction.</p>
+                    </div>
+                    <div class="inline-actions">
+                        <a class="btn-brand" href="{% url 'accounts:login' %}?role=doctor">Doctor Login</a>
+                    </div>
+                </article>
+
+                <article class="marketing-panel portal-card card-hover">
+                    <div class="panel-icon"><i class="bi bi-person-heart"></i></div>
+                    <div>
+                        <h3>Patient Care Portal</h3>
+                        <p>Book appointments quickly, review visit history, and manage profile details in a clean self-service experience.</p>
+                    </div>
+                    <div class="inline-actions">
+                        <a class="btn-brand" href="{% url 'accounts:login' %}?role=patient">Patient Login</a>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="marketing-section">
+            <div class="section-header">
+                <div>
+                    <span class="eyebrow">
+                        <i class="bi bi-layout-text-window-reverse"></i>
+                        Product strengths
+                    </span>
+                    <h2>Built around the moments that matter most in hospital operations.</h2>
+                </div>
+                <p>From scheduling to reporting, the interface prioritizes readability, responsiveness, and graceful handling of complex information.</p>
+            </div>
+
+            <div class="feature-grid">
+                <article class="marketing-panel card-hover">
+                    <div class="panel-icon"><i class="bi bi-window-sidebar"></i></div>
+                    <h3>Navigation that stays out of the way</h3>
+                    <p>Clear sidebars, concise labels, and priority actions keep teams oriented even on busy operational days.</p>
+                </article>
+                <article class="marketing-panel card-hover">
+                    <div class="panel-icon"><i class="bi bi-table"></i></div>
+                    <h3>Modern data tables</h3>
+                    <p>Readable tables, status pills, hover depth, and mobile-friendly layouts make operational data easier to scan.</p>
+                </article>
+                <article class="marketing-panel card-hover">
+                    <div class="panel-icon"><i class="bi bi-card-heading"></i></div>
+                    <h3>Premium dashboard surfaces</h3>
+                    <p>Glassmorphism cards, gradients, and soft shadows highlight important KPIs without visual clutter.</p>
+                </article>
+                <article class="marketing-panel card-hover">
+                    <div class="panel-icon"><i class="bi bi-phone"></i></div>
+                    <h3>Responsive from desk to mobile</h3>
+                    <p>Layouts adapt elegantly so frontline teams can continue work from smaller screens without losing context.</p>
+                </article>
+            </div>
+        </section>
+
+        <section id="services" class="marketing-section">
+            <div class="section-header">
+                <div>
+                    <span class="eyebrow">
+                        <i class="bi bi-hospital"></i>
+                        Care services
+                    </span>
+                    <h2>Position the hospital as a full-service digital care organization.</h2>
+                </div>
+                <p>Use the platform alongside core hospital services to create a more consistent patient and clinician journey.</p>
+            </div>
+
+            <div class="service-grid">
+                <article class="marketing-panel card-hover">
+                    <div class="panel-icon"><i class="bi bi-ambulance"></i></div>
+                    <h3>Emergency Coordination</h3>
+                    <p>Keep urgent workflows visible with reliable status tracking and structured patient handoff data.</p>
+                </article>
+                <article class="marketing-panel card-hover">
+                    <div class="panel-icon"><i class="bi bi-clipboard2-pulse"></i></div>
+                    <h3>Diagnostics & Lab Support</h3>
+                    <p>Pair diagnostics operations with better scheduling and information visibility across departments.</p>
+                </article>
+                <article class="marketing-panel card-hover">
+                    <div class="panel-icon"><i class="bi bi-capsule"></i></div>
+                    <h3>Pharmacy-Aligned Workflows</h3>
+                    <p>Support consistent patient follow-up by keeping care coordination and appointment context close at hand.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="marketing-section">
+            <div class="cta-banner">
+                <div>
+                    <h2>Move from fragmented hospital tools to one polished care operations layer.</h2>
+                    <p>Create a more modern experience for administrators, clinicians, and patients with a UI that feels trustworthy from the first click.</p>
+                </div>
+                <a class="btn-secondary-soft" href="{% url 'accounts:register' %}">
+                    <i class="bi bi-arrow-right-circle"></i>
+                    Create an Account
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer id="contact" class="site-footer">
+        <div class="marketing-shell">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <div class="sidebar-brand mb-3">
+                        <div class="brand-icon">
+                            <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            
+                                <rect x="10" y="10" width="80" height="80" rx="8" fill="#17A2B8"/>
+                                <text x="50" y="70" font-size="60" font-weight="bold" fill="white" text-anchor="middle">S</text>
+                            </svg>
+                        </div>
+                       <div class="brand-copy" style="color: var(--text);">
+                        <strong style="color: var(--text); font-size: 1.1rem;">Sancheti Hospital</strong>
+                        <span style="color: var(--muted); font-size: 0.85rem;">Premier Orthopedic Care</span>
+                    </div>
+                    </div>
+                    <p>Purpose-built to make healthcare software feel calmer, clearer, and more operationally confident.</p>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Contact</h4>
+                    <p>Email: SanchetiHospital@support.com</p>
+                    <p>Phone: +91 91117854612</p>
+                    <p>Address: Shivaji Nagar, Pune, Maharashtra</p>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Quick Links</h4>
+                    <a href="{% url 'accounts:login' %}?role=admin">Admin Portal</a><br>
+                    <a href="{% url 'accounts:login' %}?role=doctor">Doctor Portal</a><br>
+                    <a href="{% url 'accounts:login' %}?role=patient">Patient Portal</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

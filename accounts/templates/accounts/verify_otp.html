@@ -1,0 +1,100 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Verify OTP | Sancheti Hospital</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{% static 'css/healthcare-ui.css' %}">
+</head>
+<body class="auth-body">
+    <main class="auth-shell">
+        <section class="auth-side">
+            <span class="eyebrow">
+                <i class="bi bi-envelope-check"></i>
+                Email verification
+            </span>
+            <h1>Confirm your OTP to activate the account.</h1>
+            <p>This step protects the platform and helps ensure only verified users enter hospital workspaces.</p>
+
+            <div class="auth-metrics">
+                <div class="auth-metric">
+                    <strong>6 digits</strong>
+                    <span>Quick verification flow</span>
+                </div>
+                <div class="auth-metric">
+                    <strong>10 mins</strong>
+                    <span>OTP validity window</span>
+                </div>
+                <div class="auth-metric">
+                    <strong>Secure</strong>
+                    <span>Prevents unverified access</span>
+                </div>
+                <div class="auth-metric">
+                    <strong>Next</strong>
+                    <span>Login after successful verification</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="auth-card">
+            <div class="auth-brand">
+                <div class="brand-icon">
+                    <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="10" y="10" width="80" height="80" rx="8" fill="#17A2B8"/>
+                        <text x="50" y="70" font-size="60" font-weight="bold" fill="white" text-anchor="middle">S</text>
+                    </svg>
+                </div>
+                <div>
+                    <h2>Sancheti Hospital</h2>
+                    <span>Advanced Orthopedic Care</span>
+                </div>
+            </div>
+
+            <h3>Verify your OTP</h3>
+            <p>Enter the one-time code sent to your email to complete registration.</p>
+
+            {% if messages %}
+            <div class="message-stack mt-4">
+                {% for message in messages %}
+                <div class="app-alert {% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% else %}info{% endif %}">
+                    <i class="bi {% if message.tags == 'error' %}bi-exclamation-octagon{% elif message.tags == 'success' %}bi-check-circle{% else %}bi-info-circle{% endif %}"></i>
+                    <div>{{ message }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <form method="post" action="{% url 'accounts:verify_otp' %}" class="mt-4">
+                {% csrf_token %}
+                <div class="form-grid">
+                    <div class="field-block full-span">
+                        <label for="id_otp">One-Time Password</label>
+                        <input type="text" name="otp" id="id_otp" maxlength="6" value="{{ form.otp.value|default_if_none:'' }}" required>
+                        <div class="field-help">Use the six-digit OTP from your inbox.</div>
+                        {% for error in form.otp.errors %}
+                        <div class="field-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-brand">
+                        <i class="bi bi-patch-check"></i>
+                        Verify & Continue
+                    </button>
+                    <a class="btn-secondary-soft" href="{% url 'accounts:register' %}">
+                        <i class="bi bi-arrow-left"></i>
+                        Back to Registration
+                    </a>
+                </div>
+            </form>
+        </section>
+    </main>
+</body>
+</html>

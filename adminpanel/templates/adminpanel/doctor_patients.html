@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Doctor Patients | Sancheti Hospital{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div>
+        <span class="eyebrow">
+            <i class="bi bi-people"></i>
+            Patient coverage
+        </span>
+        <h2>Doctor-linked patient records</h2>
+        <p>See the patients added under this doctor account with disease context and age details in a more readable operational layout.</p>
+    </div>
+    <div class="page-hero-side">
+        <div class="mini-stat">
+            <span class="mini-stat-label">Patients listed</span>
+            <span class="mini-stat-value">{{ patients|length }}</span>
+        </div>
+        <div class="mini-stat">
+            <span class="mini-stat-label">Back to roster</span>
+            <span class="mini-stat-value"><a href="{% url 'adminpanel:doctors_list' %}" class="text-white text-decoration-none">Doctors</a></span>
+        </div>
+    </div>
+</section>
+
+<section class="table-card">
+    <div class="table-toolbar">
+        <div>
+            <h3 class="table-title">Doctor patients</h3>
+            <p class="table-copy">Patient records created from the doctor workspace.</p>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="app-table">
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Mobile</th>
+                    <th>Age</th>
+                    <th>Disease</th>
+                    <th>Created</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for patient in patients %}
+                <tr>
+                    <td>
+                        <div class="identity-cell">
+                            <span class="avatar-chip">{{ patient.name|slice:":1"|upper }}</span>
+                            <div>
+                                <strong>{{ patient.name }}</strong>
+                                <span class="subtle-meta">Doctor-added patient record</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ patient.mobile }}</td>
+                    <td>{{ patient.age }}</td>
+                    <td><span class="soft-pill soft-pill--teal">{{ patient.disease|default:"Not specified" }}</span></td>
+                    <td>{{ patient.created_at|date:"M d, Y" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">
+                        <div class="empty-state">
+                            <i class="bi bi-person-x"></i>
+                            <div>No patient records are linked to this doctor yet.</div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

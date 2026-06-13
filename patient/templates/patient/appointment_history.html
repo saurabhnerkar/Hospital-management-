@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Appointment History | Sancheti Hospital{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div>
+        <span class="eyebrow">
+            <i class="bi bi-clock-history"></i>
+            Appointment history
+        </span>
+        <h2>See your full appointment timeline.</h2>
+        <p>Review doctor details, visit timing, and status updates from a cleaner historical view of your care activity.</p>
+    </div>
+</section>
+
+<section class="table-card">
+    <div class="table-toolbar">
+        <div>
+            <h3 class="table-title">Your appointments</h3>
+            <p class="table-copy">All appointments linked to your patient account, ordered from most recent to oldest.</p>
+        </div>
+        <a class="btn-brand" href="{% url 'patient:book_appointment' %}">
+            <i class="bi bi-plus-circle"></i>
+            Book another
+        </a>
+    </div>
+    <div class="table-responsive">
+        <table class="app-table">
+            <thead>
+                <tr>
+                    <th>Doctor</th>
+                    <th>Mobile</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appointment in appointments %}
+                <tr>
+                    <td>
+                        <strong>{{ appointment.doctor.first_name|default:appointment.doctor.email }}</strong>
+                        <span class="subtle-meta">{{ appointment.doctor.email }}</span>
+                    </td>
+                    <td>{{ appointment.patient_mobile }}</td>
+                    <td>{{ appointment.date }}</td>
+                    <td>{{ appointment.time }}</td>
+                    <td><span class="status-pill status-{{ appointment.status|title }}">{{ appointment.status|title }}</span></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">
+                        <div class="empty-state">
+                            <i class="bi bi-calendar2-x"></i>
+                            <div>You do not have any appointments yet.</div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

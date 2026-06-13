@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Patient | Sancheti Hospital{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div>
+        <span class="eyebrow">
+            <i class="bi bi-pencil-square"></i>
+            Edit patient
+        </span>
+        <h2>Update the patient record.</h2>
+        <p>Refine the patient details below to keep your records accurate and easy to search.</p>
+    </div>
+</section>
+
+<section class="content-grid">
+    <article class="form-card">
+        <div class="form-header">
+            <div>
+                <h3 class="form-title">Patient information</h3>
+                <p class="form-copy">Adjust patient details and save changes back into your workspace.</p>
+            </div>
+        </div>
+
+        <form method="post" class="mt-4">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="field-block">
+                    <label for="name">Patient Name</label>
+                    <input type="text" name="name" id="name" value="{{ patient.name }}" required>
+                </div>
+                <div class="field-block">
+                    <label for="mobile">Mobile Number</label>
+                    <input type="tel" name="mobile" id="mobile" value="{{ patient.mobile }}" required>
+                </div>
+                <div class="field-block">
+                    <label for="age">Age</label>
+                    <input type="number" name="age" id="age" value="{{ patient.age }}" min="0" required>
+                </div>
+                <div class="field-block">
+                    <label for="disease">Disease / Condition</label>
+                    <input type="text" name="disease" id="disease" value="{{ patient.disease }}" required>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button class="btn-brand" type="submit">
+                    <i class="bi bi-save"></i>
+                    Save changes
+                </button>
+                <a class="btn-secondary-soft" href="{% url 'doctor:doctor_patients' %}">
+                    <i class="bi bi-arrow-left"></i>
+                    Back to patients
+                </a>
+            </div>
+        </form>
+    </article>
+
+    <aside class="note-card">
+        <h3 class="panel-title">Record quality</h3>
+        <p class="panel-copy">Accurate mobile and disease details make future search, review, and follow-up much smoother.</p>
+    </aside>
+</section>
+{% endblock %}

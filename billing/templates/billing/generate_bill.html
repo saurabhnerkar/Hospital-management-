@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Generate Bill{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-card">
+
+    <div class="section-header mb-4">
+        <div>
+            <span class="eyebrow">
+                <i class="bi bi-receipt-cutoff"></i>
+                Billing
+            </span>
+            <h2>Generate Patient Bill</h2>
+        </div>
+    </div>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <div class="row">
+
+            <div class="col-md-6 mb-3">
+                <label>Patient</label>
+                {{ form.patient }}
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label>Appointment</label>
+                {{ form.appointment }}
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label>Consultation Fee</label>
+                {{ form.consultation_fee }}
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label>Medicine Fee</label>
+                {{ form.medicine_fee }}
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label>Laboratory Fee</label>
+                {{ form.laboratory_fee }}
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label>Other Charges</label>
+                {{ form.other_charges }}
+            </div>
+
+        </div>
+
+        <button class="btn-brand">
+            <i class="bi bi-check-circle"></i>
+            Generate Bill
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

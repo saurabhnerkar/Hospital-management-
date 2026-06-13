@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Doctor Profile | Sancheti Hospital{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div>
+        <span class="eyebrow">
+            <i class="bi bi-person-vcard"></i>
+            Doctor profile
+        </span>
+        <h2>{{ doctor.first_name|default:doctor.email }}</h2>
+        <p>Review the clinician profile, specialty data, and quick access to appointments or assigned patients.</p>
+        <div class="inline-actions mt-4">
+            <a class="btn-brand" href="{% url 'adminpanel:doctor_appointments' doctor.id %}">
+                <i class="bi bi-calendar2-check"></i>
+                View appointments
+            </a>
+            <a class="btn-secondary-soft" href="{% url 'adminpanel:doctor_patients' doctor.id %}">
+                <i class="bi bi-people"></i>
+                View patients
+            </a>
+        </div>
+    </div>
+    <div class="page-hero-side">
+        <div class="mini-stat">
+            <span class="mini-stat-label">Specialization</span>
+            <span class="mini-stat-value">{{ doctor.specialization.title|default:"Unassigned" }}</span>
+        </div>
+        <div class="mini-stat">
+            <span class="mini-stat-label">Consultation fee</span>
+            <span class="mini-stat-value">{{ doctor.fees|default:"Not set" }}</span>
+        </div>
+    </div>
+</section>
+
+<section class="content-grid">
+    <article class="panel">
+        <div class="panel-header">
+            <div>
+                <h3 class="panel-title">Profile details</h3>
+                <p class="panel-copy">Operational context for this doctor account.</p>
+            </div>
+        </div>
+        <div class="info-grid">
+            <div class="info-item">
+                <label>Email</label>
+                <strong>{{ doctor.email }}</strong>
+            </div>
+            <div class="info-item">
+                <label>Role</label>
+                <strong class="text-capitalize">{{ doctor.role }}</strong>
+            </div>
+            <div class="info-item">
+                <label>Education</label>
+                <strong>{{ doctor.education|default:"Not added" }}</strong>
+            </div>
+            <div class="info-item">
+                <label>Experience</label>
+                <strong>{{ doctor.experience|default:"Not added" }}</strong>
+            </div>
+            <div class="info-item">
+                <label>Specialization</label>
+                <strong>{{ doctor.specialization.title|default:"Not assigned" }}</strong>
+            </div>
+            <div class="info-item">
+                <label>Fees</label>
+                <strong>{{ doctor.fees|default:"Not added" }}</strong>
+            </div>
+        </div>
+    </article>
+
+    <aside class="note-card">
+        <h3 class="panel-title">Professional summary</h3>
+        <p class="panel-copy">A concise snapshot for leadership and operational reviews.</p>
+        <div class="timeline-list">
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div>
+                    <strong>Biography</strong>
+                    <span>{{ doctor.bio|default:"No biography has been added yet." }}</span>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div>
+                    <strong>Profile readiness</strong>
+                    <span>Use specialization, education, and fee details to keep listings complete and trustworthy.</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+</section>
+{% endblock %}

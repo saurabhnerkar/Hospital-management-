@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Search Appointments | Sancheti Hospital{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div>
+        <span class="eyebrow">
+            <i class="bi bi-search"></i>
+            Appointment search
+        </span>
+        <h2>Find the right appointment in seconds.</h2>
+        <p>Search by patient name or mobile number to quickly access the appointment you need to review.</p>
+    </div>
+</section>
+
+<section class="table-card">
+    <div class="table-toolbar">
+        <div>
+            <h3 class="table-title">Search appointments</h3>
+            <p class="table-copy">Filter down to specific patient bookings across your schedule.</p>
+        </div>
+        <form method="get" class="search-form">
+            <input type="text" name="q" class="form-control" placeholder="Search by patient name or mobile" value="{{ query }}">
+            <button class="btn-brand" type="submit">
+                <i class="bi bi-search"></i>
+                Search
+            </button>
+        </form>
+    </div>
+    <div class="table-responsive">
+        <table class="app-table">
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Mobile</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appointment in appointments %}
+                <tr>
+                    <td>{{ appointment.patient_name }}</td>
+                    <td>{{ appointment.patient_mobile }}</td>
+                    <td>{{ appointment.date }}</td>
+                    <td>{{ appointment.time }}</td>
+                    <td><span class="status-pill status-{{ appointment.status|title }}">{{ appointment.status|title }}</span></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">
+                        <div class="empty-state">
+                            <i class="bi bi-search"></i>
+                            <div>No appointments matched your search.</div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

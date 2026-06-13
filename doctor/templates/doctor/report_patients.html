@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Patient Report | Sancheti Hospital{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div>
+        <span class="eyebrow">
+            <i class="bi bi-file-earmark-medical"></i>
+            Patient reporting
+        </span>
+        <h2>Generate patient reports by date range.</h2>
+        <p>Review patient records added over time with a simpler, more presentable reporting surface.</p>
+    </div>
+</section>
+
+<section class="form-card">
+    <div class="form-header">
+        <div>
+            <h3 class="form-title">Report filters (Optional)</h3>
+            <p class="form-copy">Choose a date range to filter patient records, or leave blank to see all patients.</p>
+        </div>
+    </div>
+    <form method="post" class="mt-4">
+        {% csrf_token %}
+        <div class="form-grid">
+            <div class="field-block">
+                <label for="start">Start date</label>
+                <input type="date" name="start" id="start">
+            </div>
+            <div class="field-block">
+                <label for="end">End date</label>
+                <input type="date" name="end" id="end">
+            </div>
+        </div>
+        <div class="form-actions">
+            <button class="btn-brand" type="submit" name="action" value="filter">
+                <i class="bi bi-bar-chart-line"></i>
+                Filter Patients
+            </button>
+        </div>
+    </form>
+    
+    {% if patients %}
+    <div class="form-actions" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(22, 109, 168, 0.12);">
+        <form method="post" style="display: inline;">
+            {% csrf_token %}
+            <input type="hidden" name="start" value="{{ request.POST.start }}">
+            <input type="hidden" name="end" value="{{ request.POST.end }}">
+            <button class="btn-secondary-soft" type="submit" name="export_format" value="excel" style="margin-right: 0.5rem;">
+                <i class="bi bi-file-earmark-spreadsheet"></i>
+                Export to Excel
+            </button>
+            <button class="btn-secondary-soft" type="submit" name="export_format" value="pdf">
+                <i class="bi bi-file-earmark-pdf"></i>
+                Export to PDF
+            </button>
+        </form>
+    </div>
+    {% endif %}
+</section>
+
+<section class="table-card">
+    <div class="table-toolbar">
+        <div>
+            <h3 class="table-title">Patients in range</h3>
+            <p class="table-copy">Patient records matching your selected reporting period.</p>
+        </div>
+        {% if patients %}
+        <div class="table-stats">
+            <span class="stat-badge">Total: {{ patients|length }}</span>
+        </div>
+        {% endif %}
+    </div>
+    <div class="table-responsive">
+        <table class="app-table">
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Mobile</th>
+                    <th>Age</th>
+                    <th>Disease</th>
+                    <th>Created</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for patient in patients %}
+                <tr>
+                    <td>{{ patient.name }}</td>
+                    <td>{{ patient.mobile }}</td>
+                    <td>{{ patient.age }}</td>
+                    <td>{{ patient.disease }}</td>
+                    <td>{{ patient.created_at|date:"M d, Y" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">
+                        <div class="empty-state">
+                            <i class="bi bi-file-earmark-medical"></i>
+                            <div>No patients found. Add a patient to see it here.</div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}Patient Dashboard | Sancheti Hospital{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div>
+        <span class="eyebrow">
+            <i class="bi bi-heart-pulse"></i>
+            Patient care portal
+        </span>
+        <h2>Track your care journey with less effort.</h2>
+        <p>Book new appointments, monitor upcoming visits, and keep a clear record of your appointment history from a calmer, modern interface.</p>
+        <div class="inline-actions mt-4">
+            <a class="btn-brand" href="{% url 'patient:book_appointment' %}">
+                <i class="bi bi-plus-circle"></i>
+                Book appointment
+            </a>
+            <a class="btn-secondary-soft" href="{% url 'patient:appointment_history' %}">
+                <i class="bi bi-clock-history"></i>
+                View history
+            </a>
+        </div>
+    </div>
+    <div class="page-hero-side">
+        <div class="mini-stat">
+            <span class="mini-stat-label">Upcoming visits</span>
+            <span class="mini-stat-value">{{ upcoming }}</span>
+        </div>
+        <div class="mini-stat">
+            <span class="mini-stat-label">Next appointment</span>
+            <span class="mini-stat-value">
+                {% if next_appointment %}
+                {{ next_appointment.date|date:"M d" }}
+                {% else %}
+                None
+                {% endif %}
+            </span>
+        </div>
+    </div>
+</section>
+
+<section class="stat-grid">
+    <article class="stat-card card-hover">
+        <div class="stat-card-head">
+            <div>
+                <span class="stat-label">Total Appointments</span>
+                <span class="stat-value" data-counter="{{ total }}">{{ total }}</span>
+            </div>
+            <div class="stat-icon"><i class="bi bi-calendar2-week"></i></div>
+        </div>
+        <span class="stat-note">All appointments linked to your account.</span>
+    </article>
+    <article class="stat-card card-hover" data-tone="success">
+        <div class="stat-card-head">
+            <div>
+                <span class="stat-label">Approved</span>
+                <span class="stat-value" data-counter="{{ approved }}">{{ approved }}</span>
+            </div>
+            <div class="stat-icon"><i class="bi bi-check2-circle"></i></div>
+        </div>
+        <span class="stat-note">Confirmed appointments ready to proceed.</span>
+    </article>
+    <article class="stat-card card-hover" data-tone="danger">
+        <div class="stat-card-head">
+            <div>
+                <span class="stat-label">Cancelled</span>
+                <span class="stat-value" data-counter="{{ cancelled }}">{{ cancelled }}</span>
+            </div>
+            <div class="stat-icon"><i class="bi bi-x-circle"></i></div>
+        </div>
+        <span class="stat-note">Appointments that did not go forward.</span>
+    </article>
+    <article class="stat-card card-hover" data-tone="teal">
+        <div class="stat-card-head">
+            <div>
+                <span class="stat-label">Upcoming</span>
+                <span class="stat-value" data-counter="{{ upcoming }}">{{ upcoming }}</span>
+            </div>
+            <div class="stat-icon"><i class="bi bi-hourglass-split"></i></div>
+        </div>
+        <span class="stat-note">Future visits that remain active.</span>
+    </article>
+</section>
+
+<section class="content-grid">
+    <article class="panel">
+        <div class="panel-header">
+            <div>
+                <h3 class="panel-title">Next appointment</h3>
+                <p class="panel-copy">Your nearest active visit, if one is scheduled.</p>
+            </div>
+        </div>
+        {% if next_appointment %}
+        <div class="info-grid">
+            <div class="info-item">
+                <label>Doctor</label>
+                <strong>{{ next_appointment.doctor.first_name|default:next_appointment.doctor.email }}</strong>
+            </div>
+            <div class="info-item">
+                <label>Date</label>
+                <strong>{{ next_appointment.date }}</strong>
+            </div>
+            <div class="info-item">
+                <label>Time</label>
+                <strong>{{ next_appointment.time }}</strong>
+            </div>
+            <div class="info-item">
+                <label>Status</label>
+                <strong>{{ next_appointment.status|title }}</strong>
+            </div>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="bi bi-calendar2-plus"></i>
+            <div>You do not have an upcoming appointment yet.</div>
+        </div>
+        {% endif %}
+    </article>
+
+    <aside class="panel">
+        <div class="panel-header">
+            <div>
+                <h3 class="panel-title">Recent activity</h3>
+                <p class="panel-copy">Your latest appointment records.</p>
+            </div>
+        </div>
+        <div class="quick-links">
+            {% for appointment in recent_appointments %}
+            <div class="detail-item">
+                <strong>{{ appointment.doctor.first_name|default:appointment.doctor.email }}</strong>
+                <span>{{ appointment.date }} at {{ appointment.time }} | {{ appointment.status|title }}</span>
+            </div>
+            {% empty %}
+            <div class="detail-item">
+                <strong>No appointments yet</strong>
+                <span>Book your first appointment to start building your history.</span>
+            </div>
+            {% endfor %}
+        </div>
+    </aside>
+</section>
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Appointment Report | Sancheti Hospital{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div>
+        <span class="eyebrow">
+            <i class="bi bi-file-earmark-bar-graph"></i>
+            Appointment reporting
+        </span>
+        <h2>Generate your appointment reports by date range.</h2>
+        <p>Review your appointment history with a structured report that is easy to scan and share.</p>
+    </div>
+</section>
+
+<section class="form-card">
+    <div class="form-header">
+        <div>
+            <h3 class="form-title">Report filters (Optional)</h3>
+            <p class="form-copy">Choose a date range to filter appointments, or leave blank to see all appointments.</p>
+        </div>
+    </div>
+    <form method="post" class="mt-4">
+        {% csrf_token %}
+        <div class="form-grid">
+            <div class="field-block">
+                <label for="start">Start date</label>
+                <input type="date" name="start" id="start">
+            </div>
+            <div class="field-block">
+                <label for="end">End date</label>
+                <input type="date" name="end" id="end">
+            </div>
+        </div>
+        <div class="form-actions">
+            <button class="btn-brand" type="submit">
+                <i class="bi bi-bar-chart-line"></i>
+                Filter Appointments
+            </button>
+        </div>
+    </form>
+</section>
+
+<section class="table-card">
+    <div class="table-toolbar">
+        <div>
+            <h3 class="table-title">Appointment Report</h3>
+            <p class="table-copy">Your appointments matching the selected reporting period.</p>
+        </div>
+        <div class="table-stats">
+            <span class="stat-badge">Total: {{ appointment_count }}</span>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="app-table">
+            <thead>
+                <tr>
+                    <th>Doctor</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Symptoms</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appointment in appointments %}
+                <tr>
+                    <td>
+                        <strong>{{ appointment.doctor.first_name|default:appointment.doctor.email }}</strong>
+                    </td>
+                    <td>{{ appointment.date }}</td>
+                    <td>{{ appointment.time }}</td>
+                    <td>{{ appointment.symptoms }}</td>
+                    <td><span class="status-pill status-{{ appointment.status }}">{{ appointment.status }}</span></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">
+                        <div class="empty-state">
+                            <i class="bi bi-calendar2-x"></i>
+                            <div>You do not have any appointments yet.</div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

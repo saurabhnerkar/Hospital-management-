@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard | Sancheti Hospital{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div>
+        <span class="eyebrow">
+            <i class="bi bi-activity"></i>
+            Executive overview
+        </span>
+        <h2>Hospital performance at a glance.</h2>
+        <p>Track clinician capacity, patient volume, and appointment flow from one refined command center designed for modern healthcare operations.</p>
+        <div class="inline-actions mt-4">
+            <a class="btn-secondary-soft" href="{% url 'adminpanel:doctor_report' %}">
+                <i class="bi bi-file-earmark-bar-graph"></i>
+                Open reports
+            </a>
+            <a class="btn-secondary-soft" href="{% url 'adminpanel:webpage_update' %}">
+                <i class="bi bi-window-stack"></i>
+                Update website content
+            </a>
+        </div>
+    </div>
+    <div class="page-hero-side">
+        <div class="mini-stat">
+            <span class="mini-stat-label">Pending appointments</span>
+            <span class="mini-stat-value">{{ pending_appointments }}</span>
+        </div>
+        <div class="mini-stat">
+            <span class="mini-stat-label">Approved appointments</span>
+            <span class="mini-stat-value">{{ approved_appointments }}</span>
+        </div>
+    </div>
+</section>
+
+<section class="stat-grid">
+    <article class="stat-card card-hover" data-tone="brand">
+        <div class="stat-card-head">
+            <div>
+                <span class="stat-label">Total Doctors</span>
+                <span class="stat-value" data-counter="{{ total_doctors }}">{{ total_doctors }}</span>
+            </div>
+            <div class="stat-icon"><i class="bi bi-person-badge"></i></div>
+        </div>
+        <span class="stat-note">Clinicians actively visible in the system.</span>
+    </article>
+
+    <article class="stat-card card-hover" data-tone="teal">
+        <div class="stat-card-head">
+            <div>
+                <span class="stat-label">Specializations</span>
+                <span class="stat-value" data-counter="{{ total_specializations }}">{{ total_specializations }}</span>
+            </div>
+            <div class="stat-icon"><i class="bi bi-diagram-3"></i></div>
+        </div>
+        <span class="stat-note">Specialty coverage across hospital services.</span>
+    </article>
+
+    <article class="stat-card card-hover" data-tone="success">
+        <div class="stat-card-head">
+            <div>
+                <span class="stat-label">Total Patients</span>
+                <span class="stat-value" data-counter="{{ total_patients }}">{{ total_patients }}</span>
+            </div>
+            <div class="stat-icon"><i class="bi bi-people"></i></div>
+        </div>
+        <span class="stat-note">Registered patients with platform access.</span>
+    </article>
+
+    <article class="stat-card card-hover" data-tone="danger">
+        <div class="stat-card-head">
+            <div>
+                <span class="stat-label">Appointments</span>
+                <span class="stat-value" data-counter="{{ total_appointments }}">{{ total_appointments }}</span>
+            </div>
+            <div class="stat-icon"><i class="bi bi-calendar2-check"></i></div>
+        </div>
+        <span class="stat-note">All appointment records captured in the platform.</span>
+    </article>
+</section>
+
+<section class="content-grid">
+    <article class="table-card">
+        <div class="table-toolbar">
+            <div>
+                <h3 class="table-title">Recent appointment activity</h3>
+                <p class="table-copy">The latest care coordination events across the organization.</p>
+            </div>
+            <a class="btn-secondary-soft" href="{% url 'adminpanel:appointments' %}">
+                <i class="bi bi-arrow-right"></i>
+                View all
+            </a>
+        </div>
+        <div class="table-responsive">
+            <table class="app-table">
+                <thead>
+                    <tr>
+                        <th>Doctor</th>
+                        <th>Patient</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appointment in recent_appointments %}
+                    <tr>
+                        <td>
+                            <div class="identity-cell">
+                                <span class="avatar-chip">{{ appointment.doctor.email|slice:":1"|upper }}</span>
+                                <div>
+                                    <strong>{{ appointment.doctor.first_name|default:appointment.doctor.email }}</strong>
+                                    <span class="subtle-meta">{{ appointment.doctor.email }}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <strong>{{ appointment.patient_name }}</strong>
+                            <span class="subtle-meta">{{ appointment.patient_mobile }}</span>
+                        </td>
+                        <td>{{ appointment.date }}</td>
+                        <td>{{ appointment.time }}</td>
+                        <td>
+                            <span class="status-pill status-{{ appointment.status|title }}">
+                                {{ appointment.status|title }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5">
+                            <div class="empty-state">
+                                <i class="bi bi-calendar2-x"></i>
+                                <div>No appointment activity is available yet.</div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </article>
+
+    <aside class="panel">
+        <div class="panel-header">
+            <div>
+                <h3 class="panel-title">Quick admin actions</h3>
+                <p class="panel-copy">Jump directly into the workflows you use most.</p>
+            </div>
+        </div>
+        <div class="quick-links">
+            <a class="quick-link" href="{% url 'adminpanel:doctors_list' %}">
+                <div>
+                    <strong>Review doctor roster</strong>
+                    <span>Profile visibility, appointments, and patient assignments.</span>
+                </div>
+                <i class="bi bi-arrow-up-right"></i>
+            </a>
+            <a class="quick-link" href="{% url 'adminpanel:patients_list' %}">
+                <div>
+                    <strong>Inspect patient records</strong>
+                    <span>See platform adoption and patient-side activity.</span>
+                </div>
+                <i class="bi bi-arrow-up-right"></i>
+            </a>
+            <a class="quick-link" href="{% url 'adminpanel:registered_users' %}">
+                <div>
+                    <strong>Audit booked users</strong>
+                    <span>Review users with appointment engagement.</span>
+                </div>
+                <i class="bi bi-arrow-up-right"></i>
+            </a>
+        </div>
+    </aside>
+</section>
+{% endblock %}
