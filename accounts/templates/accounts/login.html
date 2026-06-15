@@ -17,27 +17,27 @@
         <section class="auth-side">
             <span class="eyebrow">
                 <i class="bi bi-box-arrow-in-right"></i>
-                Secure sign in
+                Secure Sign In
             </span>
-            <h1>Access the care workspace built for your role.</h1>
-            <p>Move directly into a streamlined hospital experience with premium dashboards, clearer tables, and faster decisions for administrators, doctors, and patients.</p>
+            <h1>Welcome Back to Sancheti Hospital</h1>
+            <p>Access your personalized healthcare portal. Whether you're an administrator, doctor, or patient, our platform is designed to make your experience seamless and efficient.</p>
 
-            <div class="auth-metrics">
+            <div class="auth-metrics mt-5">
                 <div class="auth-metric">
                     <strong>Admin</strong>
-                    <span>Operations, reporting, and user visibility</span>
+                    <span>Manage operations, doctors, and patient records</span>
                 </div>
                 <div class="auth-metric">
                     <strong>Doctor</strong>
-                    <span>Appointments, patients, and daily workflow</span>
+                    <span>Access appointments, patient histories, and medical records</span>
                 </div>
                 <div class="auth-metric">
                     <strong>Patient</strong>
-                    <span>Booking, history, and self-service updates</span>
+                    <span>Book appointments, view records, and manage your health</span>
                 </div>
                 <div class="auth-metric">
-                    <strong>Verified</strong>
-                    <span>OTP-enabled onboarding for trusted access</span>
+                    <strong>Secure</strong>
+                    <span>Your data is protected with enterprise-grade security</span>
                 </div>
             </div>
         </section>
@@ -46,18 +46,18 @@
             <div class="auth-brand">
                 <div class="brand-icon">
                     <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="10" y="10" width="80" height="80" rx="8" fill="#17A2B8"/>
+                        <rect x="10" y="10" width="80" height="80" rx="8" fill="#1a237e"/>
                         <text x="50" y="70" font-size="60" font-weight="bold" fill="white" text-anchor="middle">S</text>
                     </svg>
                 </div>
                 <div>
                     <h2>Sancheti Hospital</h2>
-                    <span>Advanced Orthopedic Care</span>
+                    <span>Advanced Orthopaedic Care</span>
                 </div>
             </div>
 
-            <h3>Welcome back</h3>
-            <p>Sign in to continue into your workspace.</p>
+            <h3>Sign In to Your Account</h3>
+            <p>Please enter your credentials to continue.</p>
 
             {% if messages %}
             <div class="message-stack mt-4">
@@ -76,7 +76,7 @@
                 <div class="form-grid">
                     <div class="field-block full-span">
                         <label for="id_email">Email Address</label>
-                        <input type="email" name="email" id="id_email" value="{{ form.email.value|default_if_none:'' }}" required>
+                        <input type="email" name="email" id="id_email" value="{{ form.email.value|default_if_none:'' }}" required placeholder="Enter your email address">
                         {% for error in form.email.errors %}
                         <div class="field-error">{{ error }}</div>
                         {% endfor %}
@@ -84,17 +84,17 @@
 
                     <div class="field-block full-span">
                         <label for="id_password">Password</label>
-                        <input type="password" name="password" id="id_password" required>
+                        <input type="password" name="password" id="id_password" required placeholder="Enter your password">
                         {% for error in form.password.errors %}
                         <div class="field-error">{{ error }}</div>
                         {% endfor %}
                     </div>
 
                     <div class="field-block full-span">
-                        <label for="id_role">Role</label>
+                        <label for="id_role">Select Your Role</label>
                         <select name="role" id="id_role" required>
-                            <option value="">Select your workspace</option>
-                            <option value="admin" {% if current_role == "admin" %}selected{% endif %}>Admin</option>
+                            <option value="">Choose your portal</option>
+                            <option value="admin" {% if current_role == "admin" %}selected{% endif %}>Administrator</option>
                             <option value="doctor" {% if current_role == "doctor" %}selected{% endif %}>Doctor</option>
                             <option value="patient" {% if current_role == "patient" %}selected{% endif %}>Patient</option>
                         </select>
@@ -105,10 +105,10 @@
                 </div>
                 {% endwith %}
 
-                <div class="form-actions">
+                <div class="form-actions mt-5">
                     <button type="submit" class="btn-brand">
                         <i class="bi bi-box-arrow-in-right"></i>
-                        Sign In
+                        Sign In Now
                     </button>
                     <a class="btn-secondary-soft" href="{% url 'accounts:home' %}">
                         <i class="bi bi-arrow-left"></i>
@@ -117,9 +117,8 @@
                 </div>
             </form>
 
-            <div class="auth-links">
-                Need a new account?
-                <a href="{% url 'accounts:register' %}">Register here</a>
+            <div class="auth-links mt-4">
+                <p>Don't have an account? <a href="{% url 'accounts:register' %}">Register here</a></p>
             </div>
         </section>
     </main>
