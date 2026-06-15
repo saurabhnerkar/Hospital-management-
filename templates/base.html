@@ -54,6 +54,10 @@
                     <span><i class="bi bi-person-vcard-fill"></i> Registered Users</span>
                     <i class="bi bi-chevron-right"></i>
                 </a>
+                <a class="sidebar-link {% if request.resolver_match.namespace == 'adminpanel' and request.resolver_match.url_name == 'doctor_revenue_report' %}active{% endif %}" href="{% url 'adminpanel:doctor_revenue_report' %}">
+                    <span><i class="bi bi-currency-rupee"></i> Doctor Revenue</span>
+                    <i class="bi bi-chevron-right"></i>
+                </a>
                 <a class="sidebar-link {% if request.resolver_match.namespace == 'adminpanel' and request.resolver_match.url_name == 'doctor_report' %}active{% endif %}" href="{% url 'adminpanel:doctor_report' %}">
                     <span><i class="bi bi-clipboard2-data-fill"></i> Reports</span>
                     <i class="bi bi-chevron-right"></i>
@@ -97,6 +101,20 @@
 
                     <i class="bi bi-chevron-right"></i>
 
+                </a>
+                <a class="sidebar-link {% if request.resolver_match.namespace == 'billing' and request.resolver_match.url_name == 'payment_history' %}active{% endif %}" href="{% url 'billing:payment_history' %}">
+                    <span>
+                        <i class="bi bi-cash-stack"></i>
+                        Payment History
+                    </span>
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+                <a class="sidebar-link {% if request.resolver_match.namespace == 'billing' and request.resolver_match.url_name == 'revenue_report' %}active{% endif %}" href="{% url 'billing:revenue_report' %}">
+                    <span>
+                        <i class="bi bi-graph-up-arrow"></i>
+                        My Revenue
+                    </span>
+                    <i class="bi bi-chevron-right"></i>
                 </a>
                 <a class="sidebar-link {% if request.resolver_match.namespace == 'doctor' and request.resolver_match.url_name == 'search_patient' %}active{% endif %}" href="{% url 'doctor:search_patient' %}">
                     <span><i class="bi bi-search-heart-fill"></i> Search Patients</span>
@@ -184,7 +202,7 @@
 
             <div class="sidebar-footer">
                 <div class="sidebar-footer-card">
-                    <strong>{{ request.user.buddy|default:request.user.username }}</strong>
+                    <strong>{{ request.user.get_full_name|default:request.user.username }}</strong>
                     <div class="muted mt-2">Secure role-based access is active for the {{ request.user.role }} workspace.</div>
                     <span class="status-pill soft-pill--teal">
                         <i class="bi bi-shield-check"></i>
@@ -217,7 +235,7 @@
                     <div class="topbar-user dropdown">
                         <button class="topbar-user-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 10px; color: inherit;">
                             <div style="text-align: right;">
-                                <strong>{{ request.user.buddy|default:request.user.username }}</strong>
+                                <strong>{{ request.user.username }}</strong><br>
                                 <div class="muted text-capitalize">{{ request.user.role }} access</div>
                             </div>
                             <i class="bi bi-chevron-down"></i>

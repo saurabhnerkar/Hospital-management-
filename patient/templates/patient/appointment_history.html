@@ -34,6 +34,7 @@
                     <th>Date</th>
                     <th>Time</th>
                     <th>Status</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -47,10 +48,24 @@
                     <td>{{ appointment.date }}</td>
                     <td>{{ appointment.time }}</td>
                     <td><span class="status-pill status-{{ appointment.status|title }}">{{ appointment.status|title }}</span></td>
+                    <td>
+                        {% if appointment.status|lower != "cancelled" and appointment.date >= today %}
+                        <form method="post" action="{% url 'patient:cancel_appointment' appointment.pk %}" class="d-inline">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                            <button class="btn-danger-soft" type="submit" onclick="return confirm('Cancel this appointment?');">
+                                <i class="bi bi-x-circle"></i>
+                                Cancel
+                            </button>
+                        </form>
+                        {% else %}
+                        <span class="soft-pill soft-pill--muted">No actions available</span>
+                        {% endif %}
+                    </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="5">
+                    <td colspan="6">
                         <div class="empty-state">
                             <i class="bi bi-calendar2-x"></i>
                             <div>You do not have any appointments yet.</div>

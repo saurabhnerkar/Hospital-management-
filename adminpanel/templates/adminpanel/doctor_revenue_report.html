@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Doctor Revenue | Sancheti Hospital{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div>
+        <span class="eyebrow">
+            <i class="bi bi-currency-rupee"></i>
+            Revenue overview
+        </span>
+        <h2>Total revenue per doctor</h2>
+        <p>Read-only summary of collected payments grouped by each doctor in the hospital.</p>
+    </div>
+    <div class="page-hero-side">
+        <div class="mini-stat">
+            <span class="mini-stat-label">Hospital total</span>
+            <span class="mini-stat-value">Rs. {{ hospital_total }}</span>
+        </div>
+    </div>
+</section>
+
+<section class="table-card">
+    <div class="table-toolbar">
+        <div>
+            <h3 class="table-title">Doctor revenue breakdown</h3>
+            <p class="table-copy">Amounts are based on recorded bill payments only.</p>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="app-table">
+            <thead>
+                <tr>
+                    <th>Doctor</th>
+                    <th>Email</th>
+                    <th>Specialization</th>
+                    <th>Payments</th>
+                    <th>Total Revenue</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in doctor_revenues %}
+                <tr>
+                    <td>{{ row.doctor.get_full_name|default:row.doctor.username }}</td>
+                    <td>{{ row.doctor.email }}</td>
+                    <td>{{ row.doctor.specialization.title|default:"—" }}</td>
+                    <td>{{ row.payments_count }}</td>
+                    <td><strong>Rs. {{ row.total_revenue }}</strong></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">
+                        <div class="empty-state">
+                            <i class="bi bi-currency-rupee"></i>
+                            <div>No doctors found.</div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

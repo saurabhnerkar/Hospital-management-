@@ -58,42 +58,46 @@ def register(request):
     return render(request, "accounts/register.html", {"form": form})
 
 
-
 def verify_otp(request):
+    # Check if there's a pending OTP in session
+    if 'otp_email' not in request.session:
+        messages.error(request, "No pending verification found. Please register first.")
+        return redirect("accounts:register")
+    
     if request.method == "POST":
         form = OTPVerificationForm(request.POST)
         if form.is_valid():
             otp = form.cleaned_data["otp"]
             email = request.session.get("otp_email")
 
-            if not email:
-                messages.error(request, "Session expired. Register again.")
+            try:
+                user = CustomUser.objects.get(email=email)
+                otp_record = LoginOTP.objects.filter(
+                    user=user, otp=otp, is_used=False, expires_at__gt=timezone.now()
+                ).first()
+
+                if otp_record:
+                    otp_record.is_used = True
+                    otp_record.save()
+
+                    user.is_active = True
+                    user.is_email_verified = True
+                    user.save()
+
+                    # Clear session
+                    del request.session["otp_email"]
+                    
+                    messages.success(request, "Email verified successfully! Please log in.")
+                    return redirect("accounts:login")
+                else:
+                    messages.error(request, "Invalid or expired OTP. Please try again.")
+            except CustomUser.DoesNotExist:
+                messages.error(request, "User not found. Please register again.")
                 return redirect("accounts:register")
-
-            user = CustomUser.objects.get(email=email)
-            otp_record = LoginOTP.objects.filter(
-                user=user, otp=otp, is_used=False, expires_at__gt = timezone.now()
-            ).first()
-
-            if otp_record:
-                otp_record.is_used = True
-                otp_record.save()
-
-                user.is_active = True
-                user.is_email_verified = True
-                user.save()
-
-                del request.session["otp_email"]
-                messages.success(request, "Email verified! Please log in.")
-                return redirect("accounts:login")
-            else:
-                messages.error(request, "Invalid or expired OTP.")
     else:
         form = OTPVerificationForm()
 
     return render(request, "accounts/verify_otp.html", {"form": form})
-
-
 
 def login_view(request):
     if request.method == "POST":

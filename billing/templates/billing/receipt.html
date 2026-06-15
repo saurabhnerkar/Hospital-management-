@@ -3,21 +3,15 @@
 {% block title %}Receipt{% endblock %}
 
 {% block content %}
-
 <div class="dashboard-card">
-
     <div class="text-center">
-
         <h2>Sancheti Hospital</h2>
-
         <p>Payment Receipt</p>
-
     </div>
 
     <hr>
 
     <table class="table">
-
         <tr>
             <th>Receipt No</th>
             <td>{{ payment.receipt_no }}</td>
@@ -40,23 +34,17 @@
 
         <tr>
             <th>Amount Paid</th>
-            <td>₹ {{ payment.amount_paid }}</td>
+            <td>Rs. {{ payment.amount_paid }}</td>
         </tr>
 
         <tr>
             <th>Mode</th>
             <td>{{ payment.payment_mode }}</td>
         </tr>
-
     </table>
 
-    <button onclick="window.print()"
-            class="btn-brand">
-
+    <button onclick="window.print()" class="btn-brand">
         Print Receipt
-
     </button>
-
 </div>
-
 {% endblock %}

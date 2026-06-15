@@ -8,7 +8,7 @@ class CustomUserCreationForm(UserCreationForm):
 
     class Meta:
         model = CustomUser
-        fields = ("email", "role", "password1", "password2")
+        fields = ("username", "email", "role", "password1", "password2")
 
 class LoginForm(forms.Form):
     email = forms.EmailField(label="Email", max_length=254)

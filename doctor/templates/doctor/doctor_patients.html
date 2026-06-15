@@ -62,9 +62,9 @@
                     <td>{{ patient.age }}</td>
                     <td><span class="soft-pill soft-pill--teal">{{ patient.disease|default:"Not specified" }}</span></td>
                     <td>
-                        <a class="btn-secondary-soft" href="{% url 'doctor:edit_patient' patient.pk %}">
-                            <i class="bi bi-pencil-square"></i>
-                            Edit
+                        <a href="{% url 'doctor:consultation_complete' patient.id %}"
+                        class="btn btn-primary">
+                        Consultation Complete
                         </a>
                     </td>
                 </tr>

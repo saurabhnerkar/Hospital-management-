@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Revenue Report{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div>
+        <span class="eyebrow">
+            <i class="bi bi-graph-up-arrow"></i>
+            Revenue analytics
+        </span>
+        <h2>My billing revenue</h2>
+        <p>Your personal collections, payment volume, and pending billing activity.</p>
+    </div>
+</section>
+
+<section class="stat-grid">
+    <article class="stat-card card-hover" data-tone="success">
+        <div class="stat-card-head">
+            <div>
+                <span class="stat-label">Total Revenue</span>
+                <span class="stat-value">Rs. {{ total_revenue }}</span>
+            </div>
+            <div class="stat-icon"><i class="bi bi-currency-rupee"></i></div>
+        </div>
+    </article>
+
+    <article class="stat-card card-hover" data-tone="brand">
+        <div class="stat-card-head">
+            <div>
+                <span class="stat-label">Total Payments</span>
+                <span class="stat-value">{{ total_payments }}</span>
+            </div>
+            <div class="stat-icon"><i class="bi bi-credit-card"></i></div>
+        </div>
+    </article>
+
+    <article class="stat-card card-hover" data-tone="teal">
+        <div class="stat-card-head">
+            <div>
+                <span class="stat-label">Paid Bills</span>
+                <span class="stat-value">{{ paid_bills }}</span>
+            </div>
+            <div class="stat-icon"><i class="bi bi-check2-circle"></i></div>
+        </div>
+    </article>
+
+    <article class="stat-card card-hover" data-tone="danger">
+        <div class="stat-card-head">
+            <div>
+                <span class="stat-label">Pending Bills</span>
+                <span class="stat-value">{{ pending_bills }}</span>
+            </div>
+            <div class="stat-icon"><i class="bi bi-hourglass-split"></i></div>
+        </div>
+    </article>
+</section>
+{% endblock %}

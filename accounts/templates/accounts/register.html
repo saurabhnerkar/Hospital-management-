@@ -1,6 +1,8 @@
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,8 +13,116 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="{% static 'css/healthcare-ui.css' %}">
+    <style>
+        /* Toast/Alert custom styles for better UX */
+        .alert-toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1100;
+            min-width: 300px;
+            max-width: 450px;
+        }
+        .alert {
+            border-radius: 16px;
+            border: none;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.02);
+            padding: 1rem 1.25rem;
+            margin-bottom: 1rem;
+            backdrop-filter: blur(8px);
+            animation: slideInRight 0.3s ease-out;
+        }
+        .alert-danger {
+            background: linear-gradient(135deg, #fff5f5 0%, #fee2e2 100%);
+            border-left: 5px solid #dc2626;
+            color: #991b1b;
+        }
+        .alert-warning {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border-left: 5px solid #f59e0b;
+            color: #b45309;
+        }
+        .alert-success {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-left: 5px solid #10b981;
+            color: #065f46;
+        }
+        .alert-info {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-left: 5px solid #3b82f6;
+            color: #1e40af;
+        }
+        .btn-close-custom {
+            background: transparent;
+            border: none;
+            font-size: 1.2rem;
+            line-height: 1;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+            padding: 0;
+            margin-left: 1rem;
+        }
+        .btn-close-custom:hover {
+            opacity: 1;
+        }
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        .field-error {
+            font-size: 0.75rem;
+            color: #dc2626;
+            margin-top: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        .field-error i {
+            font-size: 0.8rem;
+        }
+        .form-grid .field-block input.error,
+        .form-grid .field-block select.error {
+            border-color: #dc2626;
+            background-color: #fef2f2;
+        }
+    </style>
 </head>
+
 <body class="auth-body">
+    <!-- Toast / Alert Container for Django Messages -->
+    <div class="alert-toast-container" id="alertContainer">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    <div class="d-flex align-items-center gap-2">
+                        {% if message.tags == 'danger' or message.tags == 'error' %}
+                            <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                        {% elif message.tags == 'success' %}
+                            <i class="bi bi-check-circle-fill fs-5"></i>
+                        {% elif message.tags == 'warning' %}
+                            <i class="bi bi-exclamation-circle-fill fs-5"></i>
+                        {% else %}
+                            <i class="bi bi-info-circle-fill fs-5"></i>
+                        {% endif %}
+                        <span class="flex-grow-1">{{ message }}</span>
+                        <button type="button" class="btn-close-custom" data-bs-dismiss="alert" aria-label="Close">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        <!-- JavaScript will also show field-specific errors dynamically if needed -->
+    </div>
+
     <main class="auth-shell">
         <section class="auth-side">
             <span class="eyebrow">
@@ -20,7 +130,8 @@
                 Guided onboarding
             </span>
             <h1>Create a secure account for your care workspace.</h1>
-            <p>Register once, verify your email with OTP, and enter a polished hospital experience that feels consistent across every role.</p>
+            <p>Register once, verify your email with OTP, and enter a polished hospital experience that feels consistent
+                across every role.</p>
 
             <div class="auth-metrics">
                 <div class="auth-metric">
@@ -31,10 +142,6 @@
                     <strong>Secure</strong>
                     <span>Email verification before activation</span>
                 </div>
-                <!-- <div class="auth-metric">
-                    <strong>Flexible</strong>
-                    <span>Upload a profile picture during setup</span>
-                </div> -->
                 <div class="auth-metric">
                     <strong>Ready</strong>
                     <span>Optimized for admin, doctor, and patient journeys</span>
@@ -46,7 +153,7 @@
             <div class="auth-brand">
                 <div class="brand-icon">
                     <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="10" y="10" width="80" height="80" rx="8" fill="#17A2B8"/>
+                        <rect x="10" y="10" width="80" height="80" rx="8" fill="#17A2B8" />
                         <text x="50" y="70" font-size="60" font-weight="bold" fill="white" text-anchor="middle">S</text>
                     </svg>
                 </div>
@@ -59,54 +166,77 @@
             <h3>Create your account</h3>
             <p>We’ll send an OTP to verify your email before first login.</p>
 
-            <form method="post" enctype="multipart/form-data" action="{% url 'accounts:register' %}" class="mt-4">
+            <form method="post" enctype="multipart/form-data" action="{% url 'accounts:register' %}" class="mt-4" id="registerForm">
                 {% csrf_token %}
+
                 <div class="form-grid">
+
+                    <!-- Username -->
                     <div class="field-block full-span">
-                        <label for="id_email">Email Address</label>
-                        <input type="email" name="email" id="id_email" value="{{ form.email.value|default_if_none:'' }}" required>
-                        {% for error in form.email.errors %}
-                        <div class="field-error">{{ error }}</div>
-                        {% endfor %}
+                        <label for="id_username">Username</label>
+                        <input type="text" name="username" id="id_username"
+                            value="{{ form.username.value|default_if_none:'' }}" placeholder="Enter username" required>
+                        <div class="field-error" id="username-error">
+                            {% for error in form.username.errors %}
+                                <i class="bi bi-exclamation-circle"></i> {{ error }}
+                            {% endfor %}
+                        </div>
                     </div>
 
+                    <!-- Email -->
+                    <div class="field-block full-span">
+                        <label for="id_email">Email Address</label>
+                        <input type="email" name="email" id="id_email" value="{{ form.email.value|default_if_none:'' }}"
+                            placeholder="Enter email address" required>
+                        <div class="field-error" id="email-error">
+                            {% for error in form.email.errors %}
+                                <i class="bi bi-exclamation-circle"></i> {{ error }}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Role -->
                     <div class="field-block full-span">
                         <label for="id_role">Role</label>
                         <select name="role" id="id_role" required>
                             <option value="">Select your workspace</option>
                             {% for key, value in form.fields.role.choices %}
-                            <option value="{{ key }}" {% if form.role.value == key %}selected{% endif %}>{{ value }}</option>
+                            <option value="{{ key }}" {% if form.role.value == key %}selected{% endif %}>
+                                {{ value }}
+                            </option>
                             {% endfor %}
                         </select>
-                        {% for error in form.role.errors %}
-                        <div class="field-error">{{ error }}</div>
-                        {% endfor %}
+                        <div class="field-error" id="role-error">
+                            {% for error in form.role.errors %}
+                                <i class="bi bi-exclamation-circle"></i> {{ error }}
+                            {% endfor %}
+                        </div>
                     </div>
 
+                    <!-- Password -->
                     <div class="field-block">
                         <label for="id_password1">Password</label>
-                        <input type="password" name="password1" id="id_password1" required>
-                        {% for error in form.password1.errors %}
-                        <div class="field-error">{{ error }}</div>
-                        {% endfor %}
+                        <input type="password" name="password1" id="id_password1" placeholder="Create password"
+                            required>
+                        <div class="field-error" id="password1-error">
+                            {% for error in form.password1.errors %}
+                                <i class="bi bi-exclamation-circle"></i> {{ error }}
+                            {% endfor %}
+                        </div>
                     </div>
 
+                    <!-- Confirm Password -->
                     <div class="field-block">
                         <label for="id_password2">Confirm Password</label>
-                        <input type="password" name="password2" id="id_password2" required>
-                        {% for error in form.password2.errors %}
-                        <div class="field-error">{{ error }}</div>
-                        {% endfor %}
+                        <input type="password" name="password2" id="id_password2" placeholder="Confirm password"
+                            required>
+                        <div class="field-error" id="password2-error">
+                            {% for error in form.password2.errors %}
+                                <i class="bi bi-exclamation-circle"></i> {{ error }}
+                            {% endfor %}
+                        </div>
                     </div>
 
-                    <!-- <div class="field-block full-span">
-                        <label for="id_profile_picture">Profile Picture</label>
-                        <input type="file" name="profile_picture" id="id_profile_picture" accept="image/*">
-                        <div class="field-help">Optional, but helpful for a richer profile experience.</div>
-                        {% for error in form.profile_picture.errors %}
-                        <div class="field-error">{{ error }}</div>
-                        {% endfor %}
-                    </div> -->
                 </div>
 
                 <div class="form-actions">
@@ -114,6 +244,7 @@
                         <i class="bi bi-send-check"></i>
                         Register & Verify
                     </button>
+
                     <a class="btn-secondary-soft" href="{% url 'accounts:login' %}">
                         <i class="bi bi-box-arrow-in-right"></i>
                         I already have an account
@@ -122,5 +253,149 @@
             </form>
         </section>
     </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Auto-dismiss alerts after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-dismiss bootstrap alerts
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }, 5000);
+            });
+
+            // Highlight fields that have django form errors (add error class)
+            const errorFields = document.querySelectorAll('.field-error');
+            errorFields.forEach(errorDiv => {
+                if (errorDiv.innerText.trim() !== '') {
+                    const parentBlock = errorDiv.closest('.field-block');
+                    if (parentBlock) {
+                        const input = parentBlock.querySelector('input, select');
+                        if (input) {
+                            input.classList.add('error');
+                        }
+                    }
+                }
+            });
+
+            // If there are any Django messages, also scroll them into view smoothly
+            const alertContainer = document.getElementById('alertContainer');
+            if (alertContainer && alertContainer.children.length > 0) {
+                alertContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            // Optionally, we can add a custom check for duplicate email/username using fetch API (client-side enhancement)
+            // But Django backend already handles it and returns form errors/messages.
+            // For a better UX, we also show a summary toast if there are non-field errors.
+            const form = document.getElementById('registerForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    // Simple frontend validation to prevent empty submits
+                    const username = document.getElementById('id_username');
+                    const email = document.getElementById('id_email');
+                    const role = document.getElementById('id_role');
+                    const pwd1 = document.getElementById('id_password1');
+                    const pwd2 = document.getElementById('id_password2');
+                    
+                    let hasError = false;
+                    function setError(input, errorDivId, message) {
+                        const errorDiv = document.getElementById(errorDivId);
+                        if (errorDiv) {
+                            errorDiv.innerHTML = `<i class="bi bi-exclamation-circle"></i> ${message}`;
+                        }
+                        if (input) input.classList.add('error');
+                        hasError = true;
+                    }
+                    function clearError(errorDivId) {
+                        const errorDiv = document.getElementById(errorDivId);
+                        if (errorDiv && errorDiv.innerText.trim() === '') {
+                            errorDiv.innerHTML = '';
+                        }
+                    }
+                    
+                    // Clear previous dynamic errors (but keep server-side if any)
+                    if (!username.value.trim()) {
+                        setError(username, 'username-error', 'Username is required.');
+                    } else if (username.value.trim().length < 3) {
+                        setError(username, 'username-error', 'Username must be at least 3 characters.');
+                    }
+                    
+                    if (!email.value.trim()) {
+                        setError(email, 'email-error', 'Email address is required.');
+                    } else if (!/^\S+@\S+\.\S+$/.test(email.value.trim())) {
+                        setError(email, 'email-error', 'Enter a valid email address.');
+                    }
+                    
+                    if (!role.value) {
+                        const roleSelect = document.getElementById('id_role');
+                        setError(roleSelect, 'role-error', 'Please select a role.');
+                    }
+                    
+                    if (!pwd1.value) {
+                        setError(pwd1, 'password1-error', 'Password is required.');
+                    } else if (pwd1.value.length < 6) {
+                        setError(pwd1, 'password1-error', 'Password must be at least 6 characters.');
+                    }
+                    
+                    if (pwd2.value !== pwd1.value) {
+                        setError(pwd2, 'password2-error', 'Passwords do not match.');
+                    } else if (pwd2.value && !pwd1.value) {
+                        // already handled
+                    }
+                    
+                    if (hasError) {
+                        e.preventDefault();
+                        // Scroll to first error
+                        const firstError = document.querySelector('.error');
+                        if (firstError) {
+                            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                        // Show a toast alert for validation summary
+                        showTemporaryAlert('Please fix the errors in the form before submitting.', 'warning');
+                    }
+                });
+            }
+            
+            // Helper function to show additional temporary alert without page reload
+            function showTemporaryAlert(message, type = 'danger') {
+                const container = document.getElementById('alertContainer');
+                if (!container) return;
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+                alertDiv.innerHTML = `
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                        <span class="flex-grow-1">${message}</span>
+                        <button type="button" class="btn-close-custom" data-bs-dismiss="alert" aria-label="Close">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </div>
+                `;
+                container.prepend(alertDiv);
+                setTimeout(() => {
+                    const bsAlert = new bootstrap.Alert(alertDiv);
+                    bsAlert.close();
+                }, 5000);
+            }
+            
+            // Also handle server-side duplicate email/username messages by showing them prominently.
+            // Django messages are already displayed, but we also enhance field-specific errors if they come from context.
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('error') === 'email_exists') {
+                showTemporaryAlert('This email is already registered. Please use a different email or log in.', 'danger');
+                const emailField = document.getElementById('id_email');
+                if (emailField) emailField.classList.add('error');
+            }
+            if (urlParams.get('error') === 'username_exists') {
+                showTemporaryAlert('Username already taken. Please choose another username.', 'danger');
+                const userField = document.getElementById('id_username');
+                if (userField) userField.classList.add('error');
+            }
+        });
+    </script>
 </body>
+
 </html>

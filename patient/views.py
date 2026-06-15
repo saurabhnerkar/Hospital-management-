@@ -1,9 +1,12 @@
-from django.shortcuts import render, redirect
+from datetime import date
+
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from accounts.models import CustomUser
 from doctor.models import Appointment
 from django.utils import timezone
+from django.views.decorators.http import require_POST
 
 
 def is_patient(user):
@@ -45,19 +48,29 @@ def patient_dashboard(request):
 @login_required
 @user_passes_test(is_patient)
 def book_appointment(request):
-
-    doctors = CustomUser.objects.filter(role="doctor")
+    doctors = CustomUser.objects.filter(role="doctor").order_by("first_name", "email")
 
     if request.method == "POST":
         doctor_id = request.POST["doctor"]
-        doctor = CustomUser.objects.get(id=doctor_id)
+        doctor = get_object_or_404(CustomUser, id=doctor_id, role="doctor")
+        today = timezone.now().date()
+
+        try:
+            appointment_date = date.fromisoformat(request.POST["date"])
+        except ValueError:
+            messages.error(request, "Please choose a valid appointment date.")
+            return render(request, "patient/book_appointment.html", {"doctors": doctors})
+
+        if appointment_date < today:
+            messages.error(request, "Appointments can only be booked for today or a future date.")
+            return render(request, "patient/book_appointment.html", {"doctors": doctors})
 
         Appointment.objects.create(
             doctor=doctor,
             patient=request.user,
             patient_name=request.user.first_name if request.user.first_name else request.user.email,
             patient_mobile=request.POST["mobile"],
-            date=request.POST["date"],
+            date=appointment_date,
             time=request.POST["time"],
             symptoms=request.POST["symptoms"],
         )
@@ -73,7 +86,30 @@ def book_appointment(request):
 @user_passes_test(is_patient)
 def appointment_history(request):
     appointments = Appointment.objects.select_related("doctor").filter(patient=request.user).order_by("-date", "-time")
-    return render(request, "patient/appointment_history.html", {"appointments": appointments})
+    return render(
+        request,
+        "patient/appointment_history.html",
+        {"appointments": appointments, "today": timezone.now().date()},
+    )
+
+
+@login_required
+@user_passes_test(is_patient)
+@require_POST
+def cancel_appointment(request, pk):
+    appointment = get_object_or_404(Appointment, pk=pk, patient=request.user)
+    today = timezone.now().date()
+
+    if appointment.status == "Cancelled":
+        messages.info(request, "This appointment is already cancelled.")
+    elif appointment.date < today:
+        messages.error(request, "Only upcoming appointments can be cancelled.")
+    else:
+        appointment.status = "Cancelled"
+        appointment.save(update_fields=["status"])
+        messages.success(request, "Appointment cancelled successfully.")
+
+    return redirect(request.POST.get("next") or "patient:appointment_history")
 
 
 @login_required

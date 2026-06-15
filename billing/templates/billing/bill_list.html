@@ -1,28 +1,19 @@
 {% extends 'base.html' %}
 
-{% block title %}Bills{% endblock %}
+{% block title %}My Bills{% endblock %}
 
 {% block content %}
-
 <div class="dashboard-card">
-
     <div class="d-flex justify-content-between mb-4">
-
-        <h2>Bill List</h2>
-
-        <a href="{% url 'billing:generate_bill' %}"
-           class="btn-brand">
+        <h2>My Bills</h2>
+        <a href="{% url 'billing:generate_bill' %}" class="btn-brand">
             Generate Bill
         </a>
-
     </div>
 
     <div class="table-responsive">
-
         <table class="table table-hover align-middle">
-
             <thead>
-
                 <tr>
                     <th>Bill No</th>
                     <th>Patient</th>
@@ -31,62 +22,39 @@
                     <th>Status</th>
                     <th>Action</th>
                 </tr>
-
             </thead>
-
             <tbody>
-
             {% for bill in bills %}
-
                 <tr>
-
                     <td>{{ bill.bill_no }}</td>
-
                     <td>{{ bill.patient.name }}</td>
-
                     <td>{{ bill.doctor.email }}</td>
-
-                    <td>₹ {{ bill.total_amount }}</td>
-
+                    <td>Rs. {{ bill.total_amount }}</td>
                     <td>
-
                         {% if bill.payment_status == 'Paid' %}
-
-                        <span class="status-pill soft-pill--teal">
-                            Paid
-                        </span>
-
+                        <span class="status-pill soft-pill--teal">Paid</span>
                         {% else %}
-
-                        <span class="status-pill">
-                            Pending
-                        </span>
-
+                        <span class="status-pill">Pending</span>
                         {% endif %}
-
                     </td>
-
                     <td>
-
-                        <a href="{% url 'billing:bill_detail' bill.id %}"
-                           class="btn btn-sm btn-outline-info">
-
+                        <a href="{% url 'billing:bill_detail' bill.id %}" class="btn btn-sm btn-outline-info">
                             View
-
                         </a>
-
+                        {% if bill.payment_status != 'Paid' %}
+                        <a href="{% url 'billing:payment' bill.id %}" class="btn btn-sm btn-brand ms-1">
+                            Record Payment
+                        </a>
+                        {% endif %}
                     </td>
-
                 </tr>
-
+            {% empty %}
+                <tr>
+                    <td colspan="6">No bills have been generated yet.</td>
+                </tr>
             {% endfor %}
-
             </tbody>
-
         </table>
-
     </div>
-
 </div>
-
 {% endblock %}

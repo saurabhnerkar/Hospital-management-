@@ -10,7 +10,7 @@
             Appointment search
         </span>
         <h2>Find the right appointment in seconds.</h2>
-        <p>Search by patient name or mobile number to quickly access the appointment you need to review.</p>
+        <p>Search by appointment ID, patient details, or date to quickly access the appointment you need to review.</p>
     </div>
 </section>
 
@@ -18,10 +18,10 @@
     <div class="table-toolbar">
         <div>
             <h3 class="table-title">Search appointments</h3>
-            <p class="table-copy">Filter down to specific patient bookings across your schedule.</p>
+            <p class="table-copy">Filter down to specific bookings by appointment ID, patient details, or appointment date.</p>
         </div>
         <form method="get" class="search-form">
-            <input type="text" name="q" class="form-control" placeholder="Search by patient name or mobile" value="{{ query }}">
+            <input type="text" name="q" class="form-control" placeholder="Search by appointment ID, patient, mobile, or YYYY-MM-DD" value="{{ query }}">
             <button class="btn-brand" type="submit">
                 <i class="bi bi-search"></i>
                 Search

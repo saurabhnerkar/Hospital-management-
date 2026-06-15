@@ -37,6 +37,7 @@
                     <th>Date</th>
                     <th>Time</th>
                     <th>Status</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -48,10 +49,36 @@
                     <td>{{ appointment.date }}</td>
                     <td>{{ appointment.time }}</td>
                     <td><span class="status-pill status-{{ appointment.status|title }}">{{ appointment.status|title }}</span></td>
+                    <td>
+                        <div class="inline-actions">
+                            {% if appointment.status|lower == "pending" %}
+                            <form method="post" action="{% url 'adminpanel:approve_appointment' appointment.pk %}" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                <button class="btn-success-soft" type="submit">
+                                    <i class="bi bi-check2-circle"></i>
+                                    Approve
+                                </button>
+                            </form>
+                            {% endif %}
+                            {% if appointment.status|lower != "cancelled" %}
+                            <form method="post" action="{% url 'adminpanel:cancel_appointment' appointment.pk %}" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                <button class="btn-danger-soft" type="submit" onclick="return confirm('Cancel this appointment?');">
+                                    <i class="bi bi-x-circle"></i>
+                                    Cancel
+                                </button>
+                            </form>
+                            {% else %}
+                            <span class="soft-pill soft-pill--muted">No actions available</span>
+                            {% endif %}
+                        </div>
+                    </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="6">
+                    <td colspan="7">
                         <div class="empty-state">
                             <i class="bi bi-calendar2-x"></i>
                             <div>No appointments have been recorded yet.</div>

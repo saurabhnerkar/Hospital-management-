@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Payment History{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div>
+        <span class="eyebrow">
+            <i class="bi bi-cash-stack"></i>
+            Payment history
+        </span>
+        <h2>Recorded payments</h2>
+        <p>Review completed bill payments and the related patient and doctor context.</p>
+    </div>
+</section>
+
+<section class="table-card">
+    <div class="table-responsive">
+        <table class="app-table">
+            <thead>
+                <tr>
+                    <th>Receipt No</th>
+                    <th>Bill No</th>
+                    <th>Patient</th>
+                    <th>Doctor</th>
+                    <th>Amount</th>
+                    <th>Mode</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payment in payments %}
+                <tr>
+                    <td>{{ payment.receipt_no }}</td>
+                    <td>{{ payment.bill.bill_no }}</td>
+                    <td>{{ payment.bill.patient.name }}</td>
+                    <td>{{ payment.bill.doctor.email }}</td>
+                    <td>Rs. {{ payment.amount_paid }}</td>
+                    <td>{{ payment.payment_mode }}</td>
+                    <td>{{ payment.payment_date|date:"M d, Y H:i" }}</td>
+                    <td>
+                        <a href="{% url 'billing:receipt' payment.id %}" class="btn btn-sm btn-outline-info">
+                            Receipt
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8">
+                        <div class="empty-state">
+                            <i class="bi bi-cash-stack"></i>
+                            <div>No payments have been recorded yet.</div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

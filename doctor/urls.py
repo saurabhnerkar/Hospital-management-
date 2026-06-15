@@ -21,4 +21,11 @@ urlpatterns = [
     path("export/patients/pdf/", views.export_patients_pdf, name="export_patients_pdf"),
     path("profile/", views.doctor_profile, name="doctor_profile"),
     path("profile/change-password/", views.doctor_change_password, name="doctor_change_password"),
+    
+
+    path(
+    'patients/<int:patient_id>/consultation-complete/',
+    views.consultation_complete,
+    name='consultation_complete'
+    )
 ]

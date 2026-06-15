@@ -4,9 +4,11 @@ from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
+from django.views.decorators.http import require_POST
 from accounts.models import CustomUser, Specialization
 from doctor.models import Appointment, AddedPatient
-from django.db.models import Q
+from billing.models import Payment
+from django.db.models import Q, Sum
 from django.utils import timezone
 
 
@@ -60,23 +62,27 @@ def doctor_profile(request, pk):
 @login_required
 @user_passes_test(is_admin)
 def doctor_appointments(request, pk):
-    doctor = get_object_or_404(CustomUser, pk=pk)
+    doctor = get_object_or_404(CustomUser, pk=pk, role="doctor")
     appointments = Appointment.objects.filter(doctor=doctor).order_by("-date", "-time")
-    return render(request, "adminpanel/doctor_appointments.html", {"appointments": appointments})
+    return render(
+        request,
+        "adminpanel/doctor_appointments.html",
+        {"appointments": appointments, "doctor": doctor},
+    )
 
 
 @login_required
 @user_passes_test(is_admin)
 def doctor_patients(request, pk):
-    doctor = get_object_or_404(CustomUser, pk=pk)
+    doctor = get_object_or_404(CustomUser, pk=pk, role="doctor")
     patients = AddedPatient.objects.filter(doctor=doctor).order_by("-created_at")
-    return render(request, "adminpanel/doctor_patients.html", {"patients": patients})
+    return render(request, "adminpanel/doctor_patients.html", {"patients": patients, "doctor": doctor})
 
 
 @login_required
 @user_passes_test(is_admin)
 def registered_users(request):
-    users = Appointment.objects.values("patient__email", "patient__id").distinct().order_by("patient__email")
+    users = CustomUser.objects.exclude(pk=request.user.pk).order_by("role", "email")
     return render(request, "adminpanel/registered_users.html", {"users": users})
 
 
@@ -84,6 +90,9 @@ def registered_users(request):
 @user_passes_test(is_admin)
 def delete_user(request, pk):
     user = get_object_or_404(CustomUser, pk=pk)
+    if user == request.user:
+        messages.error(request, "You cannot delete your own account from this screen.")
+        return redirect("adminpanel:registered_users")
     user.delete()
     messages.success(request, "User deleted!")
     return redirect("adminpanel:registered_users")
@@ -108,8 +117,42 @@ def delete_patient(request, pk):
 @login_required
 @user_passes_test(is_admin)
 def appointment_history(request):
-    appointments = Appointment.objects.all().order_by("-date", "-time")
+    appointments = Appointment.objects.select_related("doctor", "patient").all().order_by("-date", "-time")
     return render(request, "adminpanel/appointment_history.html", {"appointments": appointments})
+
+
+@login_required
+@user_passes_test(is_admin)
+@require_POST
+def approve_appointment(request, pk):
+    appointment = get_object_or_404(Appointment, pk=pk)
+
+    if appointment.status == "Cancelled":
+        messages.error(request, "Cancelled appointments cannot be approved.")
+    elif appointment.status == "Approved":
+        messages.info(request, "This appointment is already approved.")
+    else:
+        appointment.status = "Approved"
+        appointment.save(update_fields=["status"])
+        messages.success(request, "Appointment approved successfully.")
+
+    return redirect(request.POST.get("next") or "adminpanel:appointments")
+
+
+@login_required
+@user_passes_test(is_admin)
+@require_POST
+def cancel_appointment(request, pk):
+    appointment = get_object_or_404(Appointment, pk=pk)
+
+    if appointment.status == "Cancelled":
+        messages.info(request, "This appointment is already cancelled.")
+    else:
+        appointment.status = "Cancelled"
+        appointment.save(update_fields=["status"])
+        messages.success(request, "Appointment cancelled successfully.")
+
+    return redirect(request.POST.get("next") or "adminpanel:appointments")
 
 
 @login_required
@@ -136,6 +179,36 @@ def search_patient(request):
     ).order_by("email")
 
     return render(request, "adminpanel/search_patient.html", {"patients": patients, "query": query})
+
+
+@login_required
+@user_passes_test(is_admin)
+def doctor_revenue_report(request):
+    doctors = CustomUser.objects.filter(role="doctor").order_by("email")
+    doctor_revenues = []
+
+    for doctor in doctors:
+        payments = Payment.objects.filter(bill__doctor=doctor)
+        total_revenue = payments.aggregate(total=Sum("amount_paid"))["total"] or 0
+        doctor_revenues.append(
+            {
+                "doctor": doctor,
+                "total_revenue": total_revenue,
+                "payments_count": payments.count(),
+            }
+        )
+
+    doctor_revenues.sort(key=lambda item: item["total_revenue"], reverse=True)
+    hospital_total = Payment.objects.aggregate(total=Sum("amount_paid"))["total"] or 0
+
+    return render(
+        request,
+        "adminpanel/doctor_revenue_report.html",
+        {
+            "doctor_revenues": doctor_revenues,
+            "hospital_total": hospital_total,
+        },
+    )
 
 
 @login_required

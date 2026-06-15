@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Bill Details{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div>
+        <span class="eyebrow">
+            <i class="bi bi-file-earmark-medical"></i>
+            Billing detail
+        </span>
+        <h2>{{ bill.bill_no }}</h2>
+        <p>Review the generated bill, patient assignment, and billing activity history from one place.</p>
+    </div>
+    <div class="page-hero-side">
+        <div class="mini-stat">
+            <span class="mini-stat-label">Status</span>
+            <span class="mini-stat-value">{{ bill.payment_status }}</span>
+        </div>
+        <div class="mini-stat">
+            <span class="mini-stat-label">Total</span>
+            <span class="mini-stat-value">Rs. {{ bill.total_amount }}</span>
+        </div>
+    </div>
+</section>
+
+<section class="content-grid">
+    <article class="panel">
+        <div class="panel-header">
+            <div>
+                <h3 class="panel-title">Bill summary</h3>
+                <p class="panel-copy">Core patient and charge information for this bill.</p>
+            </div>
+        </div>
+        <div class="info-grid">
+            <div class="info-item">
+                <label>Patient</label>
+                <strong>{{ bill.patient.name }}</strong>
+            </div>
+            <div class="info-item">
+                <label>Doctor</label>
+                <strong>{{ bill.doctor.email }}</strong>
+            </div>
+            <div class="info-item">
+                <label>Bill Date</label>
+                <strong>{{ bill.bill_date }}</strong>
+            </div>
+            <div class="info-item">
+                <label>Payment Status</label>
+                <strong>{{ bill.payment_status }}</strong>
+            </div>
+            <div class="info-item">
+                <label>Consultation Fee</label>
+                <strong>Rs. {{ bill.consultation_fee }}</strong>
+            </div>
+            <div class="info-item">
+                <label>Medicine Fee</label>
+                <strong>Rs. {{ bill.medicine_fee }}</strong>
+            </div>
+            <div class="info-item">
+                <label>Laboratory Fee</label>
+                <strong>Rs. {{ bill.laboratory_fee }}</strong>
+            </div>
+            <div class="info-item">
+                <label>Room Fee</label>
+                <strong>Rs. {{ bill.room_fee }}</strong>
+            </div>
+            <div class="info-item">
+                <label>Other Charges</label>
+                <strong>Rs. {{ bill.other_charges }}</strong>
+            </div>
+            <div class="info-item">
+                <label>Total Amount</label>
+                <strong>Rs. {{ bill.total_amount }}</strong>
+            </div>
+        </div>
+        <div class="form-actions mt-4">
+            <a href="{% url 'billing:bill_list' %}" class="btn-secondary-soft">
+                <i class="bi bi-arrow-left"></i>
+                Back to bills
+            </a>
+            {% if bill.payment_status != 'Paid' %}
+            <a href="{% url 'billing:payment' bill.id %}" class="btn-brand">
+                <i class="bi bi-cash-coin"></i>
+                Record Payment
+            </a>
+            {% endif %}
+        </div>
+    </article>
+
+    <aside class="panel">
+        <div class="panel-header">
+            <div>
+                <h3 class="panel-title">Billing history</h3>
+                <p class="panel-copy">Activity recorded for this bill.</p>
+            </div>
+        </div>
+        <div class="quick-links">
+            {% for item in history %}
+            <div class="detail-item">
+                <strong>{{ item.action }}</strong>
+                <span>{{ item.description }} | {{ item.created_at|date:"M d, Y H:i" }}</span>
+            </div>
+            {% empty %}
+            <div class="detail-item">
+                <strong>No billing history yet</strong>
+                <span>Actions taken on this bill will appear here.</span>
+            </div>
+            {% endfor %}
+        </div>
+    </aside>
+</section>
+{% endblock %}

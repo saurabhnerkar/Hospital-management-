@@ -3,68 +3,40 @@
 {% block title %}Payment{% endblock %}
 
 {% block content %}
-
 <div class="dashboard-card">
-
-    <h2 class="mb-4">
-
-        Payment
-
-    </h2>
+    <h2 class="mb-4">Payment</h2>
 
     <div class="alert alert-info">
-
         Bill No :
         <strong>{{ bill.bill_no }}</strong>
-
         <br>
-
         Patient :
         <strong>{{ bill.patient.name }}</strong>
-
         <br>
-
         Amount :
-        <strong>₹ {{ bill.total_amount }}</strong>
-
+        <strong>Rs. {{ bill.total_amount }}</strong>
     </div>
 
     <form method="POST">
-
         {% csrf_token %}
-
         <div class="mb-3">
-
             <label>Payment Mode</label>
-
             {{ form.payment_mode }}
-
         </div>
 
         <div class="mb-3">
-
             <label>Transaction ID</label>
-
             {{ form.transaction_id }}
-
         </div>
 
         <div class="mb-3">
-
             <label>Remarks</label>
-
             {{ form.remarks }}
-
         </div>
 
         <button class="btn-brand">
-
-            Pay Bill
-
+            Record Payment
         </button>
-
     </form>
-
 </div>
-
 {% endblock %}

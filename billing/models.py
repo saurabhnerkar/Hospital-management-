@@ -1,6 +1,7 @@
+import uuid
+
 from django.db import models
-from django.db import models
-from patient.models import AddedPatient
+from doctor.models import AddedPatient
 from accounts.models import CustomUser
 from django.utils import timezone
 # Create your models here.
@@ -78,7 +79,8 @@ class Bill(models.Model):
     def save(self,*args,**kwargs):
 
         if not self.bill_no:
-            self.bill_no = f"BILL-{timezone.now().strftime('%Y%m%d%H%M%S')}"
+            stamp = timezone.now().strftime('%Y%m%d%H%M%S')
+            self.bill_no = f"BILL-{stamp}{uuid.uuid4().hex[:6].upper()}"
 
         self.total_amount = (
             self.consultation_fee +
@@ -140,7 +142,8 @@ class Payment(models.Model):
     def save(self,*args,**kwargs):
 
         if not self.receipt_no:
-            self.receipt_no = f"REC-{timezone.now().strftime('%Y%m%d%H%M%S')}"
+            stamp = timezone.now().strftime('%Y%m%d%H%M%S')
+            self.receipt_no = f"REC-{stamp}{uuid.uuid4().hex[:7].upper()}"
 
         super().save(*args,**kwargs)
 

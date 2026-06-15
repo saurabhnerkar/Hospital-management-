@@ -4,6 +4,7 @@ from accounts.models import CustomUser
 from django.contrib import messages
 from django.db.models import Q
 from django.contrib.auth.hashers import check_password
+from django.views.decorators.http import require_POST
 from .models import Appointment, AddedPatient
 from django.utils import timezone
 from django.http import HttpResponse
@@ -80,27 +81,51 @@ def doctor_appointments(request):
 
 @login_required
 @user_passes_test(is_doctor)
+@require_POST
 def approve_appointment(request, pk):
     app = get_object_or_404(Appointment, pk=pk, doctor=request.user)
-    app.status = "Approved"
-    app.save()
-    return redirect("doctor:doctor_appointments")
+    if app.status == "Cancelled":
+        messages.error(request, "Cancelled appointments cannot be approved.")
+    elif app.status == "Approved":
+        messages.info(request, "This appointment is already approved.")
+    else:
+        app.status = "Approved"
+        app.save(update_fields=["status"])
+        AddedPatient.objects.get_or_create(
+            doctor=request.user,
+            mobile=app.patient_mobile,
+            defaults={
+                "name": app.patient_name,
+                "age": 0,
+                "disease": app.symptoms or ""
+            }
+        )
+        messages.success(request, "Appointment approved successfully.")
+    return redirect(request.POST.get("next") or "doctor:doctor_appointments")
 
 
 @login_required
 @user_passes_test(is_doctor)
+@require_POST
 def cancel_appointment(request, pk):
     app = get_object_or_404(Appointment, pk=pk, doctor=request.user)
-    app.status = "Cancelled"
-    app.save()
-    return redirect("doctor:doctor_appointments")
+    if app.status == "Cancelled":
+        messages.info(request, "This appointment is already cancelled.")
+    else:
+        app.status = "Cancelled"
+        app.save(update_fields=["status"])
+        messages.success(request, "Appointment cancelled successfully.")
+    return redirect(request.POST.get("next") or "doctor:doctor_appointments")
 
 
 @login_required
 @user_passes_test(is_doctor)
 def doctor_patients(request):
     search = request.GET.get("search", "").strip()
-    patients = AddedPatient.objects.filter(doctor=request.user)
+   
+    patients = AddedPatient.objects.filter(
+    doctor=request.user,
+    status="Active")
 
     if search:
         patients = patients.filter(
@@ -152,23 +177,53 @@ def edit_patient(request, pk):
 @login_required
 @user_passes_test(is_doctor)
 def search_patient(request):
-    query = request.GET.get("q", "")
+    query = request.GET.get("q", "").strip()
+    filters = Q(name__icontains=query) | Q(mobile__icontains=query)
+      
+
+    if query.isdigit():
+        filters |= Q(pk=int(query))
+
     patients = AddedPatient.objects.filter(
-        Q(name__icontains=query) | Q(mobile__icontains=query),
-        doctor=request.user
-    )
+    doctor=request.user,
+    status="Completed"
+    ).filter(filters) 
     return render(request, "doctor/search_patient.html", {"patients": patients, "query": query})
 
+
+@login_required
+@user_passes_test(is_doctor)
+def consultation_complete(request, patient_id):
+
+    patient = get_object_or_404(
+        AddedPatient,
+        id=patient_id,
+        doctor=request.user
+    )
+
+    return redirect(
+        f"/billing/generate/?patient_id={patient.id}"
+    )
 
 
 @login_required
 @user_passes_test(is_doctor)
 def search_appointment(request):
-    query = request.GET.get("q", "")
-    appointments = Appointment.objects.filter(
-        Q(patient_name__icontains=query) | Q(patient_mobile__icontains=query),
-        doctor=request.user
-    )
+    query = request.GET.get("q", "").strip()
+    filters = Q(patient_name__icontains=query) | Q(patient_mobile__icontains=query)
+
+    if query.isdigit():
+        filters |= Q(pk=int(query))
+
+    for date_format in ("%Y-%m-%d", "%d-%m-%Y"):
+        try:
+            parsed_date = datetime.strptime(query, date_format).date()
+        except ValueError:
+            continue
+        filters |= Q(date=parsed_date)
+        break
+
+    appointments = Appointment.objects.filter(filters, doctor=request.user)
     return render(request, "doctor/search_appointment.html", {"appointments": appointments, "query": query})
 
 
@@ -228,6 +283,7 @@ def report_patients(request):
 
 
 @login_required
+@user_passes_test(is_doctor)
 def doctor_profile(request):
     doctor = request.user
 
@@ -241,9 +297,6 @@ def doctor_profile(request):
         if specialization_id:
             from accounts.models import Specialization
             doctor.specialization = Specialization.objects.get(id=specialization_id)
-
-        if "profile_picture" in request.FILES:
-            doctor.profile_picture = request.FILES["profile_picture"]
 
         doctor.save()
         messages.success(request, "Profile updated successfully!")
