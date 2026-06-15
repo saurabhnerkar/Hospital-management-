@@ -4,22 +4,392 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Sancheti Hospital | Advanced Healthcare Management</title>
+    <title>Sancheti Hospital | Premier Orthopedic & Healthcare Services</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="{% static 'css/healthcare-ui.css' %}">
+    <style>
+        /* ─── HERO: full-screen image ─── */
+        .hero-fullscreen {
+            position: relative;
+            width: 100%;
+            min-height: 92vh;
+            border-radius: 28px;     
+            overflow: hidden;
+            box-shadow: 0 32px 80px rgba(13,71,161,0.22);
+        }
+
+        /* The actual <img> fills every pixel */
+        .hero-fullscreen > img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center top;
+            display: block;
+        }
+
+        /* Dark gradient so white text stays readable */
+        .hero-fullscreen-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                110deg,
+                rgba(13, 27, 76, 0.88) 0%,
+                rgba(26, 35, 126, 0.72) 45%,
+                rgba(0, 131, 143, 0.30) 100%
+            );
+        }
+
+        /* Content sits on top of image + overlay */
+        .hero-fullscreen-content {
+            position: relative;
+            z-index: 2;
+            min-height: 92vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 60px 56px 120px;   /* bottom padding leaves room for stats bar */
+            color: #fff;
+            max-width: 700px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.28);
+            border-radius: 50px;
+            padding: 7px 18px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 0.04em;
+            width: fit-content;
+            margin-bottom: 20px;
+        }
+
+        .hero-fullscreen-content h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            line-height: 1.05;
+            margin: 0 0 18px;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-fullscreen-content h1 span {
+            color: #4dd0e1;
+        }
+
+        .hero-fullscreen-content p {
+            font-size: 1.05rem;
+            color: rgba(255,255,255,0.88);
+            line-height: 1.75;
+            max-width: 540px;
+            margin-bottom: 34px;
+        }
+
+        .hero-cta-row {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        /* Stats bar pinned to bottom of hero */
+        .hero-stats-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 2;
+            display: flex;
+            align-items: stretch;
+            background: rgba(13, 27, 76, 0.72);
+            backdrop-filter: blur(14px);
+            border-top: 1px solid rgba(255,255,255,0.12);
+            border-radius: 0 0 28px 28px;
+        }
+
+        .hero-stat {
+            flex: 1;
+            text-align: center;
+            padding: 20px 12px;
+            border-right: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+        }
+
+        .hero-stat:last-child {
+            border-right: none;
+        }
+
+        .hero-stat strong {
+            display: block;
+            font-size: 1.65rem;
+            font-weight: 800;
+            color: #4dd0e1;
+            line-height: 1;
+        }
+
+        .hero-stat span {
+            display: block;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.7);
+            font-weight: 600;
+            margin-top: 5px;
+            letter-spacing: 0.02em;
+        }
+
+        /* ─── FLOATING AI CHAT BUBBLE ─── */
+        .chat-bubble-anchor {
+            position: absolute;
+            bottom: 90px;     /* just above the stats bar */
+            right: 28px;
+            z-index: 10;
+        }
+
+        /* The round FAB button */
+        .chat-fab {
+            width: 62px;
+            height: 62px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1a237e 0%, #3949ab 100%);
+            border: 3px solid rgba(255,255,255,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 8px 28px rgba(26,35,126,0.45);
+            position: relative;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            z-index: 2;
+        }
+
+        .chat-fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 36px rgba(26,35,126,0.55);
+        }
+
+        .chat-fab i {
+            font-size: 26px;
+            color: #fff;
+        }
+
+        .chat-fab .online-dot {
+            position: absolute;
+            top: 3px;
+            right: 3px;
+            width: 13px;
+            height: 13px;
+            background: #4caf50;
+            border-radius: 50%;
+            border: 2px solid #fff;
+        }
+
+        /* Chat panel that appears on hover / click */
+        .chat-panel {
+            position: absolute;
+            bottom: 74px;
+            right: 0;
+            width: 320px;
+            background: #fff;
+            border-radius: 22px;
+            border: 1px solid rgba(26,35,126,0.12);
+            box-shadow: 0 24px 64px rgba(26,35,126,0.28);
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(14px) scale(0.94);
+            transform-origin: bottom right;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            pointer-events: none;
+        }
+
+        /* Visible state — toggled by JS */
+        .chat-panel.open {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: all;
+        }
+
+        .chat-panel-header {
+            background: linear-gradient(135deg, #1a237e 0%, #3949ab 100%);
+            color: #fff;
+            padding: 16px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chat-panel-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(0,188,212,0.75);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .chat-panel-header h5 {
+            margin: 0;
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .chat-panel-header p {
+            margin: 0;
+            font-size: 12px;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .chat-close-btn {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0;
+            opacity: 0.8;
+            transition: opacity 0.15s;
+        }
+
+        .chat-close-btn:hover { opacity: 1; }
+
+        .chat-messages {
+            padding: 16px;
+            max-height: 210px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            scrollbar-width: thin;
+        }
+
+        .chat-msg-bot,
+        .chat-msg-user {
+            max-width: 88%;
+            padding: 11px 14px;
+            border-radius: 16px;
+            font-size: 13.5px;
+            line-height: 1.55;
+        }
+
+        .chat-msg-bot {
+            background: #e8eaf6;
+            color: #0d1b4c;
+            border-bottom-left-radius: 5px;
+            align-self: flex-start;
+        }
+
+        .chat-msg-user {
+            background: linear-gradient(135deg, #1a237e, #3949ab);
+            color: #fff;
+            border-bottom-right-radius: 5px;
+            align-self: flex-end;
+        }
+
+        .chat-quick-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            padding: 2px 16px 12px;
+        }
+
+        .chat-chip {
+            padding: 6px 13px;
+            border-radius: 20px;
+            background: #e8eaf6;
+            border: 1px solid rgba(26,35,126,0.15);
+            color: #1a237e;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.15s, transform 0.15s;
+        }
+
+        .chat-chip:hover {
+            background: #c5cae9;
+            transform: translateY(-1px);
+        }
+
+        .chat-input-row {
+            display: flex;
+            gap: 9px;
+            align-items: center;
+            padding: 11px 16px 16px;
+            border-top: 1px solid rgba(26,35,126,0.08);
+        }
+
+        .chat-text-input {
+            flex: 1;
+            border-radius: 50px;
+            border: 1px solid rgba(26,35,126,0.2);
+            padding: 10px 16px;
+            font-size: 13.5px;
+            outline: none;
+            font-family: inherit;
+            color: #0d1b4c;
+            background: #fff;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .chat-text-input:focus {
+            border-color: #3949ab;
+            box-shadow: 0 0 0 3px rgba(57,73,171,0.12);
+        }
+
+        .chat-send-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1a237e, #3949ab);
+            border: none;
+            color: #fff;
+            font-size: 17px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: transform 0.15s;
+        }
+
+        .chat-send-btn:hover { transform: scale(1.1); }
+
+        /* ─── Responsive ─── */
+        @media (max-width: 767px) {
+            .hero-fullscreen-content {
+                padding: 40px 24px 130px;
+            }
+            .hero-stats-bar {
+                flex-wrap: wrap;
+            }
+            .hero-stat {
+                flex: 1 1 48%;
+            }
+            .chat-panel {
+                width: 280px;
+            }
+        }
+    </style>
 </head>
 <body class="marketing-body">
+
     <header class="marketing-nav">
         <div class="marketing-shell">
             <div class="marketing-nav-inner">
                 <div class="sidebar-brand mb-0" style="color: var(--text);">
                     <div class="brand-icon">
                         <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="10" y="10" width="80" height="80" rx="8" fill="#17A2B8"/>
+                            <rect x="10" y="10" width="80" height="80" rx="8" fill="#1a237e"/>
                             <text x="50" y="70" font-size="60" font-weight="bold" fill="white" text-anchor="middle">S</text>
                         </svg>
                     </div>
@@ -30,20 +400,20 @@
                 </div>
 
                 <nav class="marketing-links">
-                    <a href="#platform">Platform</a>
-                    <a href="#workspaces">Workspaces</a>
+                    <a href="#home">Home</a>
+                    <a href="#about">About Us</a>
                     <a href="#services">Services</a>
+                    <a href="#doctors">Our Doctors</a>
+                    <a href="#testimonials">Testimonials</a>
                     <a href="#contact">Contact</a>
                 </nav>
 
                 <div class="marketing-actions">
                     <a class="btn-secondary-soft" href="{% url 'accounts:register' %}">
-                        <i class="bi bi-person-plus"></i>
-                        Register
+                        <i class="bi bi-person-plus"></i> Register
                     </a>
                     <a class="btn-brand" href="{% url 'accounts:login' %}">
-                        <i class="bi bi-box-arrow-in-right"></i>
-                        Sign In
+                        <i class="bi bi-box-arrow-in-right"></i> Sign In
                     </a>
                 </div>
             </div>
@@ -51,158 +421,236 @@
     </header>
 
     <main class="marketing-shell">
-        <section class="hero-grid">
-            <div class="hero-copy">
-                <span class="eyebrow">
-                    <i class="bi bi-shield-check"></i>
-                    Enterprise-ready care operations
-                </span>
-                <h1>Healthcare coordination designed like a premium SaaS platform.</h1>
-                <p>Unify scheduling, clinician workflows, patient access, and operational reporting in one calm, elegant workspace built for high-trust healthcare organizations.</p>
 
-                <div class="hero-stats">
-                    <div class="hero-stat">
-                        <strong>24/7</strong>
-                        <span>care operations visibility</span>
-                    </div>
-                    <div class="hero-stat">
-                        <strong>3</strong>
-                        <span>tailored portals for every role</span>
-                    </div>
-                    <div class="hero-stat">
-                        <strong>1</strong>
-                        <span>connected source of truth</span>
-                    </div>
-                </div>
+        <!-- ══════════════════════════════════════════
+             HERO — full-screen image with floating chat
+             ══════════════════════════════════════════ -->
+        <section id="home" style="padding: 32px 0 24px;">
+            <div class="hero-fullscreen">
 
-                <div class="inline-actions">
-                    <a class="btn-brand" href="{% url 'accounts:login' %}?role=admin">
-                        <i class="bi bi-building-gear"></i>
-                        Enter Admin Workspace
-                    </a>
-                    <a class="btn-secondary-soft" href="#workspaces">
-                        <i class="bi bi-arrow-down-right"></i>
-                        Explore Portals
-                    </a>
-                </div>
-            </div>
+                <!-- Full-bleed doctor/patient image -->
+                <img src="{% static 'images/doctor_patient_img.webp' %}"
+                     alt="Doctor and patient at Sancheti Hospital">
 
-            <div class="hero-visual">
-                <div class="floating-panel">
-                    <span class="eyebrow">
-                        <i class="bi bi-activity"></i>
-                        Live overview
+                <!-- Dark gradient overlay for text legibility -->
+                <div class="hero-fullscreen-overlay"></div>
+
+                <!-- Main content -->
+                <div class="hero-fullscreen-content">
+                    <span class="hero-badge">
+                        <i class="bi bi-heart-pulse"></i>
+                        #1 Ranked Orthopedic Hospital
                     </span>
-                    <h3>Operations pulse</h3>
-                    <div class="compact-list">
-                        <div class="list-row">
-                            <strong>Appointments routed faster</strong>
-                            <span>Coordinate bookings, approvals, and histories in one place.</span>
-                        </div>
-                        <div class="list-row">
-                            <strong>Clinician workload visibility</strong>
-                            <span>Track doctor activity, patient volume, and status trends.</span>
-                        </div>
+
+                    <h1>
+                        Advanced Orthopedic Care<br>
+                        <span>In Western India</span>
+                    </h1>
+
+                    <p>
+                        From knee replacements to spine surgery, our 52+ orthopedic doctors
+                        in Pune deliver world-class care — rated 4.8 by patients, with
+                        24/7 emergency services.
+                    </p>
+
+                    <div class="hero-cta-row">
+                        <a href="{% url 'accounts:login' %}?role=patient"
+                           class="btn btn-lg"
+                           style="background: linear-gradient(135deg,#ff5252,#f44336); color:#fff; padding:14px 30px; border-radius:50px; border:none; font-weight:700;">
+                            <i class="bi-calendar-check me-2"></i> Book an Appointment
+                        </a>
+                        <a href="#contact"
+                           class="btn btn-lg"
+                           style="background:rgba(255,255,255,0.15); color:#fff; padding:14px 30px; border-radius:50px; border:1px solid rgba(255,255,255,0.3); font-weight:700;">
+                            <i class="bi-telephone me-2"></i> Request Call Back
+                        </a>
                     </div>
                 </div>
 
-                <div class="floating-panel">
-                    <h3>Experience quality</h3>
-                    <div class="detail-list">
-                        <div class="detail-item">
-                            <strong>Navigation</strong>
-                            <span>Role-based sidebars keep high-priority tasks within one click.</span>
-                        </div>
-                        <div class="detail-item">
-                            <strong>Interface clarity</strong>
-                            <span>Glass cards, soft depth, and structured data views reduce friction.</span>
-                        </div>
+                <!-- Stats bar -->
+                <div class="hero-stats-bar">
+                    <div class="hero-stat">
+                        <strong data-counter="52">0</strong>
+                        <span>Expert Doctors</span>
+                    </div>
+                    <div class="hero-stat">
+                        <strong>4.8 ★</strong>
+                        <span>Patient Rating</span>
+                    </div>
+                    <div class="hero-stat">
+                        <strong data-counter="50">0</strong>
+                        <span>Years of Excellence</span>
+                    </div>
+                    <div class="hero-stat">
+                        <strong>24 / 7</strong>
+                        <span>Emergency Care</span>
+                    </div>
+                    <div class="hero-stat">
+                        <strong data-counter="15000">0</strong>
+                        <span>Surgeries / Year</span>
                     </div>
                 </div>
 
-                <div class="floating-panel">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <strong>Digital transformation readiness</strong>
-                        <span class="soft-pill soft-pill--brand">92%</span>
+                <!-- ── Floating AI Chat Bubble ── -->
+                <div class="chat-bubble-anchor" id="chatAnchor">
+
+                    <!-- Expandable chat panel -->
+                    <div class="chat-panel" id="chatPanel">
+                        <div class="chat-panel-header">
+                            <div class="chat-panel-avatar">
+                                <i class="bi-robot"></i>
+                            </div>
+                            <div>
+                                <h5>Sancheti AI Assistant</h5>
+                                <p>Online • Ready to help</p>
+                            </div>
+                            <button class="chat-close-btn" id="chatCloseBtn" aria-label="Close chat">
+                                <i class="bi-x-lg"></i>
+                            </button>
+                        </div>
+
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="chat-msg-bot">
+                                <strong>Hello! 👋</strong><br>
+                                Welcome to Sancheti Hospital. How can I help you today?
+                            </div>
+                        </div>
+
+                        <div class="chat-quick-chips">
+                            <div class="chat-chip" data-reply="Book Appointment">Book Appointment</div>
+                            <div class="chat-chip" data-reply="Find a Doctor">Find a Doctor</div>
+                            <div class="chat-chip" data-reply="Emergency">Emergency</div>
+                        </div>
+
+                        <div class="chat-input-row">
+                            <input type="text" class="chat-text-input" id="chatInput" placeholder="Type your message…">
+                            <button class="chat-send-btn" id="chatSendBtn" aria-label="Send">
+                                <i class="bi-send"></i>
+                            </button>
+                        </div>
                     </div>
-                    <div class="mini-progress">
-                        <span style="width: 92%;"></span>
+
+                    <!-- The FAB (robot logo) -->
+                    <div class="chat-fab" id="chatFab" role="button" tabindex="0" aria-label="Open AI chat">
+                        <i class="bi-robot"></i>
+                        <span class="online-dot"></span>
                     </div>
                 </div>
+                <!-- end floating chat -->
+
             </div>
         </section>
+        <!-- end hero -->
 
-        <section id="platform" class="marketing-section">
+
+        <!-- ── About ── -->
+        <section id="about" class="marketing-section">
             <div class="section-header">
                 <div>
-                    <span class="eyebrow">
-                        <i class="bi bi-stars"></i>
-                        Platform value
-                    </span>
-                    <h2>Designed for hospitals that need speed, clarity, and trust.</h2>
+                    <span class="eyebrow"><i class="bi bi-hospital"></i> About Sancheti Hospital</span>
+                    <h2>A Legacy of Excellence in Healthcare</h2>
                 </div>
-                <p>{{ homepage_content }}</p>
+                <p>Founded with a vision to transform orthopedic care in India, Sancheti Hospital has grown to become a beacon of hope for millions.</p>
             </div>
-
             <div class="value-grid">
                 <article class="marketing-panel card-hover">
-                    <div class="panel-icon"><i class="bi bi-shield-lock"></i></div>
-                    <h3>Professional enterprise look</h3>
-                    <p>Refined dashboards, premium cards, and responsive layouts create a confident experience for busy care teams.</p>
+                    <div class="panel-icon"><i class="bi bi-trophy"></i></div>
+                    <h3>Excellence in Care</h3>
+                    <p>Accredited by leading healthcare organizations, we maintain the highest standards of medical excellence and patient safety.</p>
                 </article>
                 <article class="marketing-panel card-hover">
-                    <div class="panel-icon"><i class="bi bi-diagram-3"></i></div>
-                    <h3>Connected workflows</h3>
-                    <p>Admins, doctors, and patients each get focused tools while staying aligned around the same operational data.</p>
+                    <div class="panel-icon"><i class="bi bi-people"></i></div>
+                    <h3>Expert Team</h3>
+                    <p>Our team of renowned surgeons, doctors, and healthcare professionals are leaders in their respective fields.</p>
                 </article>
                 <article class="marketing-panel card-hover">
-                    <div class="panel-icon"><i class="bi bi-bar-chart"></i></div>
-                    <h3>Operational transparency</h3>
-                    <p>Clear metrics, accessible tables, and reporting surfaces help teams spot bottlenecks and act early.</p>
+                    <div class="panel-icon"><i class="bi bi-geo-alt"></i></div>
+                    <h3>World-Class Infrastructure</h3>
+                    <p>State-of-the-art facilities equipped with the latest medical technology for comprehensive diagnosis and treatment.</p>
                 </article>
             </div>
         </section>
 
+
+        <!-- ── Services ── -->
+        <section id="services" class="marketing-section">
+            <div class="section-header">
+                <div>
+                    <span class="eyebrow"><i class="bi bi-star"></i> Our Specialties</span>
+                    <h2>Comprehensive Healthcare Services</h2>
+                </div>
+                <p>From joint replacements to sports medicine, we offer a full spectrum of orthopedic and healthcare services.</p>
+            </div>
+            <div class="service-grid">
+                <article class="marketing-panel card-hover">
+                    <div class="panel-icon"><i class="bi bi-bandaid"></i></div>
+                    <h3>Joint Replacement</h3>
+                    <p>Advanced knee, hip, and shoulder replacements with minimally invasive techniques for faster recovery.</p>
+                </article>
+                <article class="marketing-panel card-hover">
+                    <div class="panel-icon"><i class="bi bi-person-badge"></i></div>
+                    <h3>Sports Medicine</h3>
+                    <p>Specialized care for athletes with advanced arthroscopic procedures and rehabilitation programs.</p>
+                </article>
+                <article class="marketing-panel card-hover">
+                    <div class="panel-icon"><i class="bi bi-person-standing"></i></div>
+                    <h3>Spine Surgery</h3>
+                    <p>Comprehensive spine care from degenerative conditions to complex spinal deformities.</p>
+                </article>
+                <article class="marketing-panel card-hover">
+                    <div class="panel-icon"><i class="bi bi-exclamation-triangle"></i></div>
+                    <h3>Trauma & Emergency</h3>
+                    <p>24/7 emergency services with rapid response teams for critical care and trauma management.</p>
+                </article>
+                <article class="marketing-panel card-hover">
+                    <div class="panel-icon"><i class="bi bi-clipboard2-pulse"></i></div>
+                    <h3>Arthroscopy</h3>
+                    <p>Minimally invasive surgical procedures for joint problems with faster recovery times.</p>
+                </article>
+                <article class="marketing-panel card-hover">
+                    <div class="panel-icon"><i class="bi bi-capsule"></i></div>
+                    <h3>Physiotherapy & Rehab</h3>
+                    <p>Comprehensive rehabilitation programs to help patients regain mobility and strength.</p>
+                </article>
+            </div>
+        </section>
+
+
+        <!-- ── Portal Access ── -->
         <section id="workspaces" class="marketing-section">
             <div class="section-header">
                 <div>
-                    <span class="eyebrow">
-                        <i class="bi bi-grid"></i>
-                        Role-based portals
-                    </span>
-                    <h2>Every user enters a workspace built for their day.</h2>
+                    <span class="eyebrow"><i class="bi bi-grid"></i> Digital Portal Access</span>
+                    <h2>Experience Seamless Healthcare</h2>
                 </div>
-                <p>Simple role entry points reduce confusion and make the next action obvious from the first screen.</p>
+                <p>Our digital platform brings healthcare to your fingertips with dedicated portals for every user role.</p>
             </div>
-
             <div class="portal-grid">
                 <article class="marketing-panel portal-card card-hover">
                     <div class="panel-icon"><i class="bi bi-building-gear"></i></div>
                     <div>
                         <h3>Admin Command Center</h3>
-                        <p>Monitor doctors, patient enrollment, appointment volume, and reporting from one executive view.</p>
+                        <p>Comprehensive dashboard for hospital administrators to manage doctors, appointments, and operations efficiently.</p>
                     </div>
                     <div class="inline-actions">
                         <a class="btn-brand" href="{% url 'accounts:login' %}?role=admin">Admin Login</a>
                     </div>
                 </article>
-
                 <article class="marketing-panel portal-card card-hover">
                     <div class="panel-icon"><i class="bi bi-person-badge"></i></div>
                     <div>
                         <h3>Doctor Workspace</h3>
-                        <p>Handle appointments, search patient records, manage patient lists, and review care activity with less friction.</p>
+                        <p>Efficiently manage appointments, patient records, and medical histories in an intuitive interface designed for medical professionals.</p>
                     </div>
                     <div class="inline-actions">
                         <a class="btn-brand" href="{% url 'accounts:login' %}?role=doctor">Doctor Login</a>
                     </div>
                 </article>
-
                 <article class="marketing-panel portal-card card-hover">
                     <div class="panel-icon"><i class="bi bi-person-heart"></i></div>
                     <div>
                         <h3>Patient Care Portal</h3>
-                        <p>Book appointments quickly, review visit history, and manage profile details in a clean self-service experience.</p>
+                        <p>Book appointments, access medical records, view prescriptions, and communicate with your doctors from anywhere.</p>
                     </div>
                     <div class="inline-actions">
                         <a class="btn-brand" href="{% url 'accounts:login' %}?role=patient">Patient Login</a>
@@ -211,122 +659,241 @@
             </div>
         </section>
 
-        <section class="marketing-section">
+
+        <!-- ── Testimonials ── -->
+        <section id="testimonials" class="marketing-section">
             <div class="section-header">
                 <div>
-                    <span class="eyebrow">
-                        <i class="bi bi-layout-text-window-reverse"></i>
-                        Product strengths
-                    </span>
-                    <h2>Built around the moments that matter most in hospital operations.</h2>
+                    <span class="eyebrow"><i class="bi bi-chat-dots"></i> Patient Stories</span>
+                    <h2>What Our Patients Say</h2>
                 </div>
-                <p>From scheduling to reporting, the interface prioritizes readability, responsiveness, and graceful handling of complex information.</p>
+                <p>Real stories from real patients who have experienced exceptional care at Sancheti Hospital.</p>
             </div>
-
             <div class="feature-grid">
                 <article class="marketing-panel card-hover">
-                    <div class="panel-icon"><i class="bi bi-window-sidebar"></i></div>
-                    <h3>Navigation that stays out of the way</h3>
-                    <p>Clear sidebars, concise labels, and priority actions keep teams oriented even on busy operational days.</p>
+                    <div class="panel-icon"><i class="bi bi-quote"></i></div>
+                    <h3>Life-Changing Surgery</h3>
+                    <p>"After years of knee pain, my surgery at Sancheti has given me my life back. I can walk, exercise, and enjoy time with my grandchildren pain-free!"</p>
+                    <div class="mt-3">
+                        <strong>Rajesh Sharma</strong>
+                        <span class="text-muted d-block">Knee Replacement Patient</span>
+                    </div>
                 </article>
                 <article class="marketing-panel card-hover">
-                    <div class="panel-icon"><i class="bi bi-table"></i></div>
-                    <h3>Modern data tables</h3>
-                    <p>Readable tables, status pills, hover depth, and mobile-friendly layouts make operational data easier to scan.</p>
-                </article>
-                <article class="marketing-panel card-hover">
-                    <div class="panel-icon"><i class="bi bi-card-heading"></i></div>
-                    <h3>Premium dashboard surfaces</h3>
-                    <p>Glassmorphism cards, gradients, and soft shadows highlight important KPIs without visual clutter.</p>
-                </article>
-                <article class="marketing-panel card-hover">
-                    <div class="panel-icon"><i class="bi bi-phone"></i></div>
-                    <h3>Responsive from desk to mobile</h3>
-                    <p>Layouts adapt elegantly so frontline teams can continue work from smaller screens without losing context.</p>
+                    <div class="panel-icon"><i class="bi bi-quote"></i></div>
+                    <h3>Exceptional Care</h3>
+                    <p>"The doctors and staff are incredibly compassionate and professional. From diagnosis to recovery, every step was handled with utmost care."</p>
+                    <div class="mt-3">
+                        <strong>Priya Mehta</strong>
+                        <span class="text-muted d-block">Sports Medicine Patient</span>
+                    </div>
                 </article>
             </div>
         </section>
 
-        <section id="services" class="marketing-section">
-            <div class="section-header">
-                <div>
-                    <span class="eyebrow">
-                        <i class="bi bi-hospital"></i>
-                        Care services
-                    </span>
-                    <h2>Position the hospital as a full-service digital care organization.</h2>
-                </div>
-                <p>Use the platform alongside core hospital services to create a more consistent patient and clinician journey.</p>
-            </div>
 
-            <div class="service-grid">
-                <article class="marketing-panel card-hover">
-                    <div class="panel-icon"><i class="bi bi-ambulance"></i></div>
-                    <h3>Emergency Coordination</h3>
-                    <p>Keep urgent workflows visible with reliable status tracking and structured patient handoff data.</p>
-                </article>
-                <article class="marketing-panel card-hover">
-                    <div class="panel-icon"><i class="bi bi-clipboard2-pulse"></i></div>
-                    <h3>Diagnostics & Lab Support</h3>
-                    <p>Pair diagnostics operations with better scheduling and information visibility across departments.</p>
-                </article>
-                <article class="marketing-panel card-hover">
-                    <div class="panel-icon"><i class="bi bi-capsule"></i></div>
-                    <h3>Pharmacy-Aligned Workflows</h3>
-                    <p>Support consistent patient follow-up by keeping care coordination and appointment context close at hand.</p>
-                </article>
-            </div>
-        </section>
-
+        <!-- ── CTA ── -->
         <section class="marketing-section">
             <div class="cta-banner">
                 <div>
-                    <h2>Move from fragmented hospital tools to one polished care operations layer.</h2>
-                    <p>Create a more modern experience for administrators, clinicians, and patients with a UI that feels trustworthy from the first click.</p>
+                    <h2>Ready to Begin Your Journey to Better Health?</h2>
+                    <p>Book your appointment today and experience world-class healthcare at Sancheti Hospital.</p>
                 </div>
                 <a class="btn-secondary-soft" href="{% url 'accounts:register' %}">
-                    <i class="bi bi-arrow-right-circle"></i>
-                    Create an Account
+                    <i class="bi bi-arrow-right-circle"></i> Create Your Account
                 </a>
             </div>
         </section>
+
     </main>
+
+
+    <!-- ── Footer ── -->
+    <style>
+        .footer-background {
+            position: relative;
+            background-image: url('{% static 'images/footer_image.jpg' %}');
+            background-size: cover;
+            background-position: center;
+            border-radius: 28px;
+            overflow: hidden;
+            margin-top: 40px;
+        }
+        .footer-overlay {
+            background: linear-gradient(135deg, rgba(26, 35, 126, 0.95) 0%, rgba(0, 188, 212, 0.88) 100%);
+            padding: 60px 40px;
+            color: white;
+        }
+        .footer-overlay .footer-column {
+            background: transparent;
+            border: none;
+            box-shadow: none;
+        }
+        .footer-overlay .footer-column h4,
+        .footer-overlay .footer-column p,
+        .footer-overlay .footer-column a,
+        .footer-overlay .sidebar-brand strong,
+        .footer-overlay .sidebar-brand span {
+            color: white !important;
+        }
+        .footer-overlay .brand-icon {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .footer-overlay .footer-column a:hover {
+            color: #00bcd4 !important;
+        }
+    </style>
 
     <footer id="contact" class="site-footer">
         <div class="marketing-shell">
-            <div class="footer-grid">
-                <div class="footer-column">
-                    <div class="sidebar-brand mb-3">
-                        <div class="brand-icon">
-                            <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            
-                                <rect x="10" y="10" width="80" height="80" rx="8" fill="#17A2B8"/>
-                                <text x="50" y="70" font-size="60" font-weight="bold" fill="white" text-anchor="middle">S</text>
-                            </svg>
+            <div class="footer-background">
+                <div class="footer-overlay">
+                    <div class="footer-grid">
+                        <div class="footer-column">
+                            <div class="sidebar-brand mb-3">
+                                <div class="brand-icon">
+                                    <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <rect x="10" y="10" width="150" height="80" rx="8" fill="white"/>
+                                        <text x="50" y="70" font-size="60" font-weight="bold" fill="#1a237e" text-anchor="middle">S</text>
+                                    </svg>
+                                </div>
+                               <div class="brand-copy">
+                                <strong style="font-size: 1.1rem;">Sancheti Hospital</strong>
+                                <span style="font-size: 0.85rem; opacity: 0.9;">Premier Orthopedic Care</span>
+                            </div>
+                            </div>
+                            <p style="opacity: 0.9;">A trusted name in healthcare with over 50 years of excellence in orthopedics and comprehensive medical services.</p>
                         </div>
-                       <div class="brand-copy" style="color: var(--text);">
-                        <strong style="color: var(--text); font-size: 1.1rem;">Sancheti Hospital</strong>
-                        <span style="color: var(--muted); font-size: 0.85rem;">Premier Orthopedic Care</span>
-                    </div>
-                    </div>
-                    <p>Purpose-built to make healthcare software feel calmer, clearer, and more operationally confident.</p>
-                </div>
 
-                <div class="footer-column">
-                    <h4>Contact</h4>
-                    <p>Email: SanchetiHospital@support.com</p>
-                    <p>Phone: +91 91117854612</p>
-                    <p>Address: Shivaji Nagar, Pune, Maharashtra</p>
-                </div>
+                        <div class="footer-column">
+                            <h4>Contact Us</h4>
+                            <p><i class="bi bi-geo-alt"></i> Shivaji Nagar, Pune, Maharashtra, India</p>
+                            <p><i class="bi bi-telephone"></i> +91 20 2553 6000</p>
+                            <p><i class="bi bi-envelope"></i> info@sanchetihospital.org</p>
+                            <p><i class="bi bi-clock"></i> 24/7 Emergency Services Available</p>
+                        </div>
 
-                <div class="footer-column">
-                    <h4>Quick Links</h4>
-                    <a href="{% url 'accounts:login' %}?role=admin">Admin Portal</a><br>
-                    <a href="{% url 'accounts:login' %}?role=doctor">Doctor Portal</a><br>
-                    <a href="{% url 'accounts:login' %}?role=patient">Patient Portal</a>
+                        <div class="footer-column">
+                            <h4>Quick Links</h4>
+                            <a href="{% url 'accounts:login' %}?role=admin">Admin Portal</a><br>
+                            <a href="{% url 'accounts:login' %}?role=doctor">Doctor Portal</a><br>
+                            <a href="{% url 'accounts:login' %}?role=patient">Patient Portal</a><br>
+                            <a href="#services">Our Services</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </footer>
+
+
+    <!-- ══════════════════════════════════════
+         SCRIPTS
+         ══════════════════════════════════════ -->
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        /* ── Sidebar (kept from original) ── */
+        const sidebar  = document.querySelector("[data-sidebar]");
+        const backdrop = document.querySelector("[data-sidebar-backdrop]");
+        const toggles  = document.querySelectorAll("[data-sidebar-toggle]");
+
+        const setSidebarState = (open) => {
+            if (!sidebar || !backdrop) return;
+            sidebar.classList.toggle("is-open", open);
+            backdrop.classList.toggle("is-open", open);
+            document.body.classList.toggle("sidebar-open", open);
+        };
+
+        toggles.forEach(t => t.addEventListener("click", () =>
+            setSidebarState(!sidebar?.classList.contains("is-open"))
+        ));
+        if (backdrop) backdrop.addEventListener("click", () => setSidebarState(false));
+
+
+        /* ── Animated counters ── */
+        document.querySelectorAll("[data-counter]").forEach((el) => {
+            const target   = Number(el.getAttribute("data-counter")) || 0;
+            const duration = 900;
+            const start    = performance.now();
+            const tick = (now) => {
+                const p = Math.min((now - start) / duration, 1);
+                const e = 1 - Math.pow(1 - p, 3);
+                el.textContent = Math.round(target * e).toLocaleString();
+                if (p < 1) requestAnimationFrame(tick);
+            };
+            requestAnimationFrame(tick);
+        });
+
+
+        /* ── Floating AI Chat Bubble ── */
+        const fab       = document.getElementById("chatFab");
+        const panel     = document.getElementById("chatPanel");
+        const closeBtn  = document.getElementById("chatCloseBtn");
+        const messagesEl= document.getElementById("chatMessages");
+        const inputEl   = document.getElementById("chatInput");
+        const sendBtn   = document.getElementById("chatSendBtn");
+        let panelOpen   = false;
+
+        const setPanel = (open) => {
+            panelOpen = open;
+            panel.classList.toggle("open", open);
+        };
+
+        /* Open on hover */
+        fab.addEventListener("mouseenter", () => setPanel(true));
+
+        /* Toggle on click */
+        fab.addEventListener("click",   () => setPanel(!panelOpen));
+        fab.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") setPanel(!panelOpen); });
+
+        /* Close button */
+        closeBtn.addEventListener("click", (e) => { e.stopPropagation(); setPanel(false); });
+
+        /* Close if clicking outside */
+        document.addEventListener("click", (e) => {
+            if (panelOpen && !document.getElementById("chatAnchor").contains(e.target)) {
+                setPanel(false);
+            }
+        });
+
+        /* Quick chip replies */
+        const autoReplies = {
+            "Book Appointment": "Great! You can book via our Patient Portal or call +91 20 2553 6000. Shall I guide you?",
+            "Find a Doctor":    "We have 52+ specialist doctors. Which specialty are you looking for — Knee, Spine, or Sports Medicine?",
+            "Emergency":        "🚨 For emergencies call +91 20 2553 6000 immediately. Our 24/7 trauma team is always ready.",
+        };
+
+        function addMessage(text, type) {
+            const div = document.createElement("div");
+            div.className = type === "user" ? "chat-msg-user" : "chat-msg-bot";
+            div.textContent = text;
+            messagesEl.appendChild(div);
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+        }
+
+        document.querySelectorAll(".chat-chip").forEach(chip => {
+            chip.addEventListener("click", () => {
+                const query = chip.dataset.reply;
+                addMessage(query, "user");
+                setTimeout(() => addMessage(autoReplies[query] || "Let me connect you with our team!", "bot"), 650);
+            });
+        });
+
+        function sendMessage() {
+            const text = inputEl.value.trim();
+            if (!text) return;
+            addMessage(text, "user");
+            inputEl.value = "";
+            setTimeout(() =>
+                addMessage("Thank you for reaching out! Our team will respond shortly. For urgent queries call +91 20 2553 6000.", "bot"),
+            700);
+        }
+
+        sendBtn.addEventListener("click", sendMessage);
+        inputEl.addEventListener("keydown", (e) => { if (e.key === "Enter") sendMessage(); });
+    });
+    </script>
+
 </body>
 </html>
