@@ -142,3 +142,4 @@ def login_view(request):
 def user_logout(request):
     logout(request)
     return redirect("accounts:home")
+ 
