@@ -1,9 +1,26 @@
+# Web Framework & Utils
+Django>=4.2
+python-decouple
+python-dotenv
+openpyxl
+reportlab
+
+# AI & LLM Core
 langchain
+langchain-core
 langchain-community
+
+# AI Integrations
 langchain-openai
+langchain-google-genai
+langchain-huggingface
+langchain-chroma
+
+# Vector Databases & Embeddings
 chromadb
 sentence-transformers
-pypdf
 faiss-cpu
+
+# Document Processing & Tokenization
+pypdf
 tiktoken
-python-dotenv
