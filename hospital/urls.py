@@ -26,6 +26,7 @@ urlpatterns = [
     path("patient/", include("patient.urls", namespace="patient")),
     path("adminpanel/", include("adminpanel.urls")),
     path('billing/', include('billing.urls')),
+    path('chatbot/', include('chatbot.urls')),
 
     
 ]

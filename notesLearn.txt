@@ -1,0 +1,36 @@
+Since this is a Hospital System, we don't want the AI making up fake medical records (called hallucinating), 
+so we set the temperature low to 0.3.
+This forces it to stick strictly to facts.
+
+
+prompt.py
+System Prompt: This is like the AI's instruction manual.
+
+It tells the AI: "You are a helpful assistant for a hospital."
+It tells the AI: "Only answer based on the context I give you."
+It tells the AI: "If you don't know, say you don't know."
+
+Retrieval: This is the "memory" step.
+
+The system searches the ChromaDB vector store for chunks of text that are mathematically similar to the user's question.
+For example, if the user asks "Who is John Doe?", the system retrieves the chunk containing John Doe's medical history.
+
+RAG Pipeline:
+
+This is the whole process: User Question -> Retrieval -> Prompt Construction -> LLM -> Answer.
+The name RAG stands for Retrieval-Augmented Generation.
+
+Vector Store:
+
+A special database (ChromaDB in this case) that stores text as "vectors" (long lists of numbers).
+It allows for "semantic search" – finding text based on meaning, not just keywords.
+
+embeddings.py:
+
+Embedding Model: This is the math engine that converts text into those numerical vectors.
+
+text-embedding-004: A specific model from Google that turns words into numbers.
+
+LangChain Core:
+
+This is the toolkit/framework that makes connecting all the pieces (Vector Store, Prompts, LLM) much easier.

@@ -937,14 +937,49 @@
             });
         });
 
-        function sendMessage() {
+        async function sendMessage() {
             const text = inputEl.value.trim();
             if (!text) return;
+            
+            // 1. Show user message
             addMessage(text, "user");
             inputEl.value = "";
-            setTimeout(() =>
-                addMessage("Thank you for reaching out! Our team will respond shortly. For urgent queries call +91 20 2553 6000.", "bot"),
-            700);
+            
+            // 2. Show a temporary loading indicator (optional but good UI)
+            const loadingId = Date.now();
+            const loadingDiv = document.createElement("div");
+            loadingDiv.className = "chat-msg-bot";
+            loadingDiv.id = "loading-" + loadingId;
+            loadingDiv.innerHTML = "<em>Typing...</em>";
+            messagesEl.appendChild(loadingDiv);
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+
+            try {
+                // 3. Send message to Django backend
+                const response = await fetch("/chatbot/api/chat/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        // Note: If using CSRF token, add it here. Our view is @csrf_exempt for simplicity right now.
+                    },
+                    body: JSON.stringify({ message: text })
+                });
+                
+                const data = await response.json();
+                
+                // 4. Remove loading indicator
+                document.getElementById("loading-" + loadingId).remove();
+                
+                // 5. Show AI response
+                if (data.reply) {
+                    addMessage(data.reply, "bot");
+                } else {
+                    addMessage("Sorry, I encountered an error: " + (data.error || "Unknown"), "bot");
+                }
+            } catch (err) {
+                document.getElementById("loading-" + loadingId).remove();
+                addMessage("Network error. Please try again.", "bot");
+            }
         }
 
         sendBtn.addEventListener("click", sendMessage);
